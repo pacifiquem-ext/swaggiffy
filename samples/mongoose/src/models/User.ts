@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { registerSchema } from 'swaggiffy';
+import mongoose from "mongoose";
+import { registerSchema } from "swaggiffy";
 
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -8,6 +8,6 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
 });
 
-registerSchema('User', userSchema, { orm: 'mongoose' });
+registerSchema("User", userSchema, { orm: "mongoose" });
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model("User", userSchema);

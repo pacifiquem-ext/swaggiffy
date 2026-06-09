@@ -1,14 +1,14 @@
-import { Model } from 'objection';
-import { Schema } from 'swaggiffy';
+import { Model } from "objection";
+import { Schema } from "swaggiffy";
 
-@Schema('User')
+@Schema("User")
 export class User extends Model {
-    static tableName = 'users';
+    static tableName = "users";
 
-    id: number = 0;
-    name: string = '';
-    email: string = '';
-    password: string = '';
+    id = 0;
+    name = "";
+    email = "";
+    password = "";
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
 }

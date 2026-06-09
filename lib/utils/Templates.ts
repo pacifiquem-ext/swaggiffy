@@ -1,7 +1,6 @@
-import { PlatformTools } from '../platform/PlatformTools';
-import { TemplateOptions } from '../typings';
-import { OSA2 } from '../typings/swagger/openapi.types';
-import { Defaults } from './Defaults';
+import { PlatformTools } from "../platform/PlatformTools";
+import { TemplateOptions } from "../typings";
+import { Defaults } from "./Defaults";
 
 /**
  * Swaggiffy Templates class
@@ -36,30 +35,30 @@ export class Templates {
         return JSON.stringify(
             {
                 swaggerDefinition: {
-                    swagger: '2.0',
+                    swagger: "2.0",
                     info: {
                         title: name,
                         description: `${name} API Documentation`,
-                        termsOfService: 'http://swagger.io/terms/',
+                        termsOfService: "http://swagger.io/terms/",
                         contact: {
-                            name: 'API Support',
-                            url: 'http://www.swagger.io/support',
-                            email: 'support@swagger.io',
+                            name: "API Support",
+                            url: "http://www.swagger.io/support",
+                            email: "support@swagger.io",
                         },
                         license: {
-                            name: 'Apache 2.0',
-                            url: 'http://www.apache.org/licenses/LICENSE-2.0.html',
+                            name: "Apache 2.0",
+                            url: "http://www.apache.org/licenses/LICENSE-2.0.html",
                         },
-                        version: '1.0.0',
+                        version: "1.0.0",
                     },
-                    host: `localhost:${port || '5008'}`,
-                    basePath: '/',
-                    schemes: ['http'],
+                    host: `localhost:${port || "5008"}`,
+                    basePath: "/",
+                    schemes: ["http"],
                     securityDefinitions: {
                         Bearer: {
-                            type: 'apiKey',
-                            name: 'Authorization',
-                            in: 'header',
+                            type: "apiKey",
+                            name: "Authorization",
+                            in: "header",
                         },
                     },
                     paths: {},
@@ -81,32 +80,32 @@ export class Templates {
         return JSON.stringify(
             {
                 swaggerDefinition: {
-                    openapi: '3.0.0',
+                    openapi: "3.0.0",
                     info: {
                         title: name,
                         description: `${name} API Documentation`,
-                        termsOfService: 'http://swagger.io/terms/',
+                        termsOfService: "http://swagger.io/terms/",
                         contact: {
-                            name: 'API Support',
-                            url: 'http://www.swagger.io/support',
-                            email: 'support@swagger.io',
+                            name: "API Support",
+                            url: "http://www.swagger.io/support",
+                            email: "support@swagger.io",
                         },
                         license: {
-                            name: 'Apache 2.0',
-                            url: 'http://www.apache.org/licenses/LICENSE-2.0.html',
+                            name: "Apache 2.0",
+                            url: "http://www.apache.org/licenses/LICENSE-2.0.html",
                         },
-                        version: '1.0.0',
+                        version: "1.0.0",
                     },
-                    host: `localhost:${port || '5008'}`,
-                    basePath: '/',
-                    schemes: ['http'],
+                    host: `localhost:${port || "5008"}`,
+                    basePath: "/",
+                    schemes: ["http"],
                     paths: {},
                     components: {
                         securitySchemes: {
                             bearerAuth: {
-                                type: 'http',
-                                scheme: 'bearer',
-                                bearerFormat: 'JWT',
+                                type: "http",
+                                scheme: "bearer",
+                                bearerFormat: "JWT",
                             },
                         },
                     },

@@ -1,24 +1,20 @@
-import { SchemaMetadata } from '../storage/types/SchemaMetadata';
+import { SchemaMetadata } from "../storage/types/SchemaMetadata";
 import {
-    APIPathDefinition,
     SwaggerAPIDefinition,
     TClassDef,
-    TClassProps,
     TSchemaProp,
     TSwaggerDataType,
     TSwaggerNumberFormats,
     TSwaggerSchema,
     TSwaggerSchemaDef,
     TSwaggerStringFormats,
-} from '../typings';
-import { PlatformTools } from '../platform/PlatformTools';
-import { Defaults } from './Defaults';
-import { ConfigMetadataStorage } from '../storage/ConfigMetadataStorage';
-import { getConfigMetadataStorage } from '../globals';
-import { APIDefinitionMetadata } from '../storage/types/APIDefinitionMetadata';
-import mongoose from 'mongoose';
-import { FileUtils } from './FileUtils';
-import { ValidationUtils } from './ValidationUtils';
+} from "../typings";
+import { PlatformTools } from "../platform/PlatformTools";
+import { ConfigMetadataStorage } from "../storage/ConfigMetadataStorage";
+import { getConfigMetadataStorage } from "../globals";
+import { APIDefinitionMetadata } from "../storage/types/APIDefinitionMetadata";
+import mongoose from "mongoose";
+import { ValidationUtils } from "./ValidationUtils";
 
 export class Utility {
     /**
@@ -50,7 +46,7 @@ export class Utility {
 
         return <TSwaggerSchema>{
             [obj.name]: {
-                type: 'object',
+                type: "object",
                 properties: props,
             },
         };
@@ -85,12 +81,12 @@ export class Utility {
      * @params schema
      * @returns Promise<void>
      */
-    static async swaggiffy(schema: TSwaggerSchemaDef | SwaggerAPIDefinition, type: 'DEFINITION' | 'SCHEMA') {
+    static async swaggiffy(schema: TSwaggerSchemaDef | SwaggerAPIDefinition, type: "DEFINITION" | "SCHEMA") {
         return new Promise<void>((ok, fail) => {
             const swaggerDoc: Buffer = PlatformTools.getFileContents(Utility.configStore.swaggerDefinitionFilePath);
-            let definition: string = '';
-            if (type === 'DEFINITION') definition = this.updateAPIDefinition(swaggerDoc, schema as SwaggerAPIDefinition);
-            else if (type === 'SCHEMA') definition = this.updateSchema(swaggerDoc, schema as TSwaggerSchemaDef);
+            let definition = "";
+            if (type === "DEFINITION") definition = this.updateAPIDefinition(swaggerDoc, schema as SwaggerAPIDefinition);
+            else if (type === "SCHEMA") definition = this.updateSchema(swaggerDoc, schema as TSwaggerSchemaDef);
 
             PlatformTools.writeToFile(Utility.configStore.swaggerDefinitionFilePath, definition);
             ok();
@@ -161,15 +157,15 @@ export class Utility {
         return apiDefinition;
     }
 
-    static extractType(func: Function) {
+    static extractType(func: (...args: unknown[]) => unknown) {
         const str = func.toString();
 
-        if (str.toLowerCase().includes('string')) return 'string';
-        else if (str.toLowerCase().includes('number')) return 'number';
-        else if (str.toLowerCase().includes('boolean')) return 'boolean';
-        else if (str.toLowerCase().includes('date')) return 'string';
-        else if (str.toLowerCase().includes('objectid')) return 'string';
-        else if (str.toLowerCase().includes('uuid')) return 'string';
+        if (str.toLowerCase().includes("string")) return "string";
+        else if (str.toLowerCase().includes("number")) return "number";
+        else if (str.toLowerCase().includes("boolean")) return "boolean";
+        else if (str.toLowerCase().includes("date")) return "string";
+        else if (str.toLowerCase().includes("objectid")) return "string";
+        else if (str.toLowerCase().includes("uuid")) return "string";
     }
 
     static castMongooseType(
@@ -177,25 +173,25 @@ export class Utility {
     ): [TSwaggerDataType, TSwaggerStringFormats | TSwaggerNumberFormats | undefined, boolean | undefined, string | number | boolean | undefined] {
         switch (type) {
             case mongoose.Schema.Types.String.schemaName:
-                return ['string', undefined, undefined, 'string'];
+                return ["string", undefined, undefined, "string"];
             case mongoose.Schema.Types.Number.schemaName:
-                return ['number', undefined, undefined, 0];
+                return ["number", undefined, undefined, 0];
             case mongoose.Schema.Types.Date.schemaName:
-                return ['string', 'date', undefined, new Date().toLocaleString()];
+                return ["string", "date", undefined, new Date().toLocaleString()];
             case mongoose.Schema.Types.Boolean.schemaName:
-                return ['boolean', undefined, undefined, false];
+                return ["boolean", undefined, undefined, false];
             case mongoose.Schema.Types.Buffer.schemaName:
-                return ['object', undefined, undefined, undefined];
+                return ["object", undefined, undefined, undefined];
             case mongoose.Schema.Types.Mixed.schemaName:
-                return ['object', undefined, undefined, undefined];
-            case 'ObjectID':
-                return ['string', undefined, true, '507f1f77bcf86cd799439011'];
+                return ["object", undefined, undefined, undefined];
+            case "ObjectID":
+                return ["string", undefined, true, "507f1f77bcf86cd799439011"];
             case mongoose.Schema.Types.Array.schemaName:
-                return ['array', undefined, undefined, undefined];
+                return ["array", undefined, undefined, undefined];
             case mongoose.Schema.Types.Map.schemaName:
-                return ['object', undefined, undefined, undefined];
+                return ["object", undefined, undefined, undefined];
             default:
-                return ['object', undefined, undefined, undefined];
+                return ["object", undefined, undefined, undefined];
         }
     }
 
@@ -204,65 +200,65 @@ export class Utility {
     ): [TSwaggerDataType, TSwaggerStringFormats | TSwaggerNumberFormats | undefined, boolean | undefined, string | number | boolean | undefined] {
         console.log(type);
         switch (type) {
-            case 'STRING':
-                return ['string', undefined, undefined, 'string'];
-            case 'TEXT':
-                return ['string', undefined, undefined, 'string'];
-            case 'CITEXT':
-                return ['number', undefined, undefined, 0];
-            case 'DATE':
-                return ['string', 'date', undefined, new Date().toLocaleString()];
-            case 'DATEONLY':
-                return ['string', 'date', undefined, new Date().toLocaleString()];
-            case 'UUID':
-                return ['string', 'uuid', undefined, '78a208e0-01fc-4cc0-b533-de8c076a6bf8'];
-            case 'UUIDV4':
-                return ['string', 'uuid', undefined, '78a208e0-01fc-4cc0-b533-de8c076a6bf8'];
-            case 'BOOLEAN':
-                return ['boolean', undefined, undefined, false];
-            case 'FLOAT':
-                return ['number', 'float', undefined, 0.0];
-            case 'DOUBLE':
-                return ['number', 'double', undefined, 0.0];
-            case 'BIGINT':
-                return ['number', undefined, undefined, 0.0];
-            case 'DECIMAL':
-                return ['number', 'float', true, 0.0];
-            case 'INTEGER':
-                return ['number', undefined, true, 0.0];
+            case "STRING":
+                return ["string", undefined, undefined, "string"];
+            case "TEXT":
+                return ["string", undefined, undefined, "string"];
+            case "CITEXT":
+                return ["number", undefined, undefined, 0];
+            case "DATE":
+                return ["string", "date", undefined, new Date().toLocaleString()];
+            case "DATEONLY":
+                return ["string", "date", undefined, new Date().toLocaleString()];
+            case "UUID":
+                return ["string", "uuid", undefined, "78a208e0-01fc-4cc0-b533-de8c076a6bf8"];
+            case "UUIDV4":
+                return ["string", "uuid", undefined, "78a208e0-01fc-4cc0-b533-de8c076a6bf8"];
+            case "BOOLEAN":
+                return ["boolean", undefined, undefined, false];
+            case "FLOAT":
+                return ["number", "float", undefined, 0.0];
+            case "DOUBLE":
+                return ["number", "double", undefined, 0.0];
+            case "BIGINT":
+                return ["number", undefined, undefined, 0.0];
+            case "DECIMAL":
+                return ["number", "float", true, 0.0];
+            case "INTEGER":
+                return ["number", undefined, true, 0.0];
             default:
-                return ['object', undefined, undefined, undefined];
+                return ["object", undefined, undefined, undefined];
         }
     }
 
     static castJSType(type: string): [TSwaggerDataType, TSwaggerStringFormats | TSwaggerNumberFormats | undefined] {
         switch (type) {
-            case 'string':
-                return ['string', undefined];
+            case "string":
+                return ["string", undefined];
 
-            case 'number':
-                return ['number', undefined];
+            case "number":
+                return ["number", undefined];
 
-            case 'bigint':
-                return ['number', undefined];
+            case "bigint":
+                return ["number", undefined];
 
-            case 'boolean':
-                return ['boolean', undefined];
+            case "boolean":
+                return ["boolean", undefined];
 
-            case 'symbol':
-                return ['object', undefined];
+            case "symbol":
+                return ["object", undefined];
 
-            case 'undefined':
-                return ['object', undefined];
+            case "undefined":
+                return ["object", undefined];
 
-            case 'object':
-                return ['object', undefined];
+            case "object":
+                return ["object", undefined];
 
-            case 'function':
-                return ['object', undefined];
+            case "function":
+                return ["object", undefined];
 
             default:
-                return ['object', undefined];
+                return ["object", undefined];
         }
     }
 }

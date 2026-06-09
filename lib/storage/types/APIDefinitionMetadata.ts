@@ -1,11 +1,10 @@
-import { APIPathDefinition, TSwaggerSchema } from '../../typings';
-import * as express from 'express';
+import { APIPathDefinition } from "../../typings";
 
 export interface APIDefinitionMetadata {
     /**
      * Router which owns the API Definition
      */
-    readonly router: express.Router;
+    readonly router: unknown;
 
     /**
      * Swagger Definition for the schema

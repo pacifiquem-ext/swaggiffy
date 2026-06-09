@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
-import { SchemaRegistryObj, TClassDef, TClassProps, TSwaggerType } from '../typings';
-import { Utility } from '../utils/Utility';
-import { Sequelize, Model } from 'sequelize';
+import mongoose from "mongoose";
+import { SchemaRegistryObj, TClassDef, TClassProps } from "../typings";
+import { Utility } from "../utils/Utility";
 
 /**
  * Schema Extractor utilities

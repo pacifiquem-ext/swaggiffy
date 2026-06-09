@@ -1,8 +1,8 @@
-import { PlatformTools } from './platform/PlatformTools';
-import { SchemaMetadataStorage } from './storage/SchemaMetadataStorage';
-import { APIDefinitionMetadataStorage } from './storage/APIDefinitionMetadataStorage';
-import { ConfigMetadataStorage } from './storage/ConfigMetadataStorage';
-import { ConfigurationProps } from './typings';
+import { PlatformTools } from "./platform/PlatformTools";
+import { SchemaMetadataStorage } from "./storage/SchemaMetadataStorage";
+import { APIDefinitionMetadataStorage } from "./storage/APIDefinitionMetadataStorage";
+import { ConfigMetadataStorage } from "./storage/ConfigMetadataStorage";
+import { ConfigurationProps } from "./typings";
 
 /**
  * Global string method reversed for paths
@@ -12,8 +12,11 @@ import { ConfigurationProps } from './typings';
 // }
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Express {
+        // eslint-disable-next-line @typescript-eslint/no-empty-interface
         interface Request {}
+        // eslint-disable-next-line @typescript-eslint/no-empty-interface
         interface Response {}
         interface Application {
             use: any;

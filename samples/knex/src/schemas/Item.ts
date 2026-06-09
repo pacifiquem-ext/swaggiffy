@@ -1,9 +1,9 @@
-import { registerSchema } from 'swaggiffy';
+import { registerSchema } from "swaggiffy";
 
-registerSchema('Item', {
+registerSchema("Item", {
     id: 0,
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     quantity: 0,
     price: 0,
     userId: 0,

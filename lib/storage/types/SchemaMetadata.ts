@@ -1,10 +1,10 @@
-import { TSwaggerSchema } from '../../typings';
+import { TSwaggerSchema } from "../../typings";
 
 export interface SchemaMetadata {
     /**
      * Class which owns the schema
      */
-    readonly target: any;
+    readonly target: unknown;
 
     /**
      * Name of Class owning the schema

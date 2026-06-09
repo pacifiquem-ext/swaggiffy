@@ -1,8 +1,8 @@
-import { TClassDef, TSwaggerSchema } from '../typings';
-import { Utility } from '../utils/Utility';
-import { getSchemaMetadataStorage } from '../globals';
-import { SchemaMetadata } from '../storage/types/SchemaMetadata';
-import { SchemaExtractor } from '../extractors/schema.extractor';
+import { TClassDef, TSwaggerSchema } from "../typings";
+import { Utility } from "../utils/Utility";
+import { getSchemaMetadataStorage } from "../globals";
+import { SchemaMetadata } from "../storage/types/SchemaMetadata";
+import { SchemaExtractor } from "../extractors/schema.extractor";
 
 /**
  * Constructs a standard swagger definition from decorated class

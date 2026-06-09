@@ -1,36 +1,34 @@
-import * as yargs from 'yargs';
-import { getConfigMetadataStorage } from '../globals';
-import { PlatformTools } from '../platform/PlatformTools';
-import { SetupRunner } from '../runners/SetupRunner';
-import { TOpenApiVersion } from '../typings';
-import { FileUtils } from '../utils/FileUtils';
-import { Templates } from '../utils/Templates';
+import * as yargs from "yargs";
+import { getConfigMetadataStorage } from "../globals";
+import { PlatformTools } from "../platform/PlatformTools";
+import { SetupRunner } from "../runners/SetupRunner";
+import { Templates } from "../utils/Templates";
 
 /**
  * Generate Spec Command
  */
 export class GenerateSpecCommand implements yargs.CommandModule {
-    command = 'generate:spec';
-    describe = 'Generate swaggiffy specifications file.';
-    aliases = 'g:spec';
+    command = "generate:spec";
+    describe = "Generate swaggiffy specifications file.";
+    aliases = "g:spec";
 
     builder(args: yargs.Argv) {
         return args
-            .option('path', {
-                alias: 'specFilePath',
-                type: 'string',
-                describe: 'File where the swagger specifications will be be created. Defaults to BASE_DIR/swagger/swagger.json .',
+            .option("path", {
+                alias: "specFilePath",
+                type: "string",
+                describe: "File where the swagger specifications will be be created. Defaults to BASE_DIR/swagger/swagger.json .",
             })
-            .option('o', {
-                alias: 'openApiVersion',
-                type: 'string',
-                choices: ['2.0', '3.0'],
-                describe: 'Choose OpenAPI version, expected values are 2.0, 3.0',
+            .option("o", {
+                alias: "openApiVersion",
+                type: "string",
+                choices: ["2.0", "3.0"],
+                describe: "Choose OpenAPI version, expected values are 2.0, 3.0",
             })
-            .option('r', {
-                alias: 'refresh',
-                type: 'boolean',
-                describe: 'Re-generate and overwrite existing config file.',
+            .option("r", {
+                alias: "refresh",
+                type: "boolean",
+                describe: "Re-generate and overwrite existing config file.",
             });
     }
 
@@ -38,18 +36,18 @@ export class GenerateSpecCommand implements yargs.CommandModule {
         try {
             const override: boolean | undefined = args.refresh ? true : false;
             const template: string =
-                args.openApiVersion != undefined
-                    ? args.openApiVersion == '2.0'
+                args.openApiVersion !== undefined
+                    ? args.openApiVersion === "2.0"
                         ? Templates.getOSA2Template(getConfigMetadataStorage().appName, getConfigMetadataStorage().appPort)
-                        : args.openApiVersion == '3.0'
+                        : args.openApiVersion === "3.0"
                         ? Templates.getOSA3Template(getConfigMetadataStorage().appName, getConfigMetadataStorage().appPort)
-                        : ''
+                        : ""
                     : Templates.getOSA2Template();
-            const specFile: string = await SetupRunner.generateSpecFile(template, args.specFilePath as string | undefined, override as boolean);
+            await SetupRunner.generateSpecFile(template, args.specFilePath as string | undefined, override as boolean);
 
-            PlatformTools.logSuccess('Successfully generated spec file');
+            PlatformTools.logSuccess("Successfully generated spec file");
         } catch (err) {
-            PlatformTools.logCmdErr('Error when generating config file: ', err);
+            PlatformTools.logCmdErr("Error when generating config file: ", err);
         }
     }
 }

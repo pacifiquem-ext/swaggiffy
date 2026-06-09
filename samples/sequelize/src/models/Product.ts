@@ -1,6 +1,6 @@
-import { DataTypes, Model } from 'sequelize';
-import { registerSchema } from 'swaggiffy';
-import { sequelize } from '../db';
+import { DataTypes, Model } from "sequelize";
+import { registerSchema } from "swaggiffy";
+import { sequelize } from "../db";
 
 export class Product extends Model {
     declare id: number;
@@ -21,7 +21,7 @@ Product.init(
         stock: { type: DataTypes.INTEGER, defaultValue: 0 },
         userId: { type: DataTypes.INTEGER, allowNull: false },
     },
-    { sequelize, tableName: 'products', timestamps: true },
+    { sequelize, tableName: "products", timestamps: true },
 );
 
-registerSchema('Product', Product.rawAttributes, { orm: 'sequelize' });
+registerSchema("Product", Product.rawAttributes, { orm: "sequelize" });

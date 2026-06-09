@@ -1,12 +1,12 @@
-import { Schema } from 'swaggiffy';
+import { Schema } from "swaggiffy";
 
-@Schema('Article')
+@Schema("Article")
 export class ArticleSchema {
-    id: number = 0;
-    title: string = '';
-    content: string = '';
-    published: boolean = false;
-    authorId: number = 0;
+    id = 0;
+    title = "";
+    content = "";
+    published = false;
+    authorId = 0;
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
 }

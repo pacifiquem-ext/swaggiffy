@@ -1,51 +1,51 @@
-import * as yargs from 'yargs';
-import { PlatformTools } from '../platform/PlatformTools';
-import { getConfigMetadataStorage } from '../globals';
-import { PathString, TemplateOptions, TFormat, TOpenApiVersion } from '../typings';
-import { SetupRunner } from '../runners/SetupRunner';
-import { Templates } from '../utils/Templates';
-import { ValidationUtils } from '../utils/ValidationUtils';
-import { Defaults } from '../utils/Defaults';
+import * as yargs from "yargs";
+import { PlatformTools } from "../platform/PlatformTools";
+import { getConfigMetadataStorage } from "../globals";
+import { PathString, TemplateOptions, TFormat, TOpenApiVersion } from "../typings";
+import { SetupRunner } from "../runners/SetupRunner";
+import { Templates } from "../utils/Templates";
+import { ValidationUtils } from "../utils/ValidationUtils";
+import { Defaults } from "../utils/Defaults";
 
 /**
  * Swaggiffy generator
  */
 export class InitCommand implements yargs.CommandModule {
-    command = 'init';
-    describe = 'Builds and Generates necessarly config files for Swaggiffy inside the current directory.';
+    command = "init";
+    describe = "Builds and Generates necessarly config files for Swaggiffy inside the current directory.";
 
     builder(args: yargs.Argv) {
         return args
-            .option('n', {
-                alias: 'name',
-                describe: 'Name of project',
+            .option("n", {
+                alias: "name",
+                describe: "Name of project",
             })
-            .option('o', {
-                alias: 'openApiVersion',
-                choices: ['2.0', '3.0'],
-                describe: 'Choose OpenAPI version, expected values are 2.0, 3.0',
+            .option("o", {
+                alias: "openApiVersion",
+                choices: ["2.0", "3.0"],
+                describe: "Choose OpenAPI version, expected values are 2.0, 3.0",
             })
-            .option('f', {
-                alias: 'format',
-                choices: ['json', 'yaml'],
-                describe: 'Swagger Specification Format, expected values are JSON, YAML',
+            .option("f", {
+                alias: "format",
+                choices: ["json", "yaml"],
+                describe: "Swagger Specification Format, expected values are JSON, YAML",
             })
-            .option('d', {
-                alias: 'defFile',
-                describe: 'Swagger Definition output file path',
+            .option("d", {
+                alias: "defFile",
+                describe: "Swagger Definition output file path",
             })
-            .option('p', {
-                alias: 'port',
-                describe: 'Swagger port',
+            .option("p", {
+                alias: "port",
+                describe: "Swagger port",
             })
-            .option('a', {
-                alias: 'apiRoute',
-                describe: 'Swagger Documentation API Route',
+            .option("a", {
+                alias: "apiRoute",
+                describe: "Swagger Documentation API Route",
             })
-            .option('r', {
-                alias: 'refresh',
-                type: 'boolean',
-                describe: 'Regenerates new Swagger Config file',
+            .option("r", {
+                alias: "refresh",
+                type: "boolean",
+                describe: "Regenerates new Swagger Config file",
             });
     }
 
@@ -75,17 +75,17 @@ export class InitCommand implements yargs.CommandModule {
             );
 
             const template: string =
-                args.openApiVersion != undefined
-                    ? args.openApiVersion == '2.0'
+                args.openApiVersion !== undefined
+                    ? args.openApiVersion === "2.0"
                         ? Templates.getOSA2Template(getConfigMetadataStorage().appName, getConfigMetadataStorage().appPort)
-                        : args.openApiVersion == '3.0'
+                        : args.openApiVersion === "3.0"
                         ? Templates.getOSA3Template(getConfigMetadataStorage().appName, getConfigMetadataStorage().appPort)
                         : Templates.getOSA2Template(getConfigMetadataStorage().appName, getConfigMetadataStorage().appPort)
                     : Templates.getOSA2Template(getConfigMetadataStorage().appName, getConfigMetadataStorage().appPort);
 
             await SetupRunner.generateSpecFile(template, args.specFilePath as string | undefined);
         } catch (err) {
-            PlatformTools.logCmdErr('Error when initializing swaggiffy.', err);
+            PlatformTools.logCmdErr("Error when initializing swaggiffy.", err);
             process.exit(1);
         }
     }

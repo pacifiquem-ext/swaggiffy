@@ -1,22 +1,22 @@
-import 'reflect-metadata';
-import express from 'express';
-import dotenv from 'dotenv';
-import { Swaggiffy } from 'swaggiffy';
+import "reflect-metadata";
+import express from "express";
+import dotenv from "dotenv";
+import { Swaggiffy } from "swaggiffy";
 
 dotenv.config();
 
-import './schema';
-import { authRouter } from './routes/auth.routes';
-import { userRouter } from './routes/user.routes';
-import { eventRouter } from './routes/event.routes';
+import "./schema";
+import { authRouter } from "./routes/auth.routes";
+import { userRouter } from "./routes/user.routes";
+import { eventRouter } from "./routes/event.routes";
 
 const app = express();
 const PORT = process.env.PORT || 3007;
 
 app.use(express.json());
-app.use('/api/auth', authRouter);
-app.use('/api/users', userRouter);
-app.use('/api/events', eventRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/events", eventRouter);
 
 new Swaggiffy().setupExpress(app).swaggiffy();
 

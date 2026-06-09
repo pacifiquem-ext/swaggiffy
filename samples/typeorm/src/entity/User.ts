@@ -1,20 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import { Schema } from 'swaggiffy';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Schema } from "swaggiffy";
 
-@Schema('User')
-@Entity('users')
+@Schema("User")
+@Entity("users")
 export class User {
     @PrimaryGeneratedColumn()
-    id: number = 0;
+    id = 0;
 
     @Column()
-    name: string = '';
+    name = "";
 
     @Column({ unique: true })
-    email: string = '';
+    email = "";
 
     @Column()
-    password: string = '';
+    password = "";
 
     @CreateDateColumn()
     createdAt: Date = new Date();

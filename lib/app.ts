@@ -1,8 +1,8 @@
-import swaggerUi, { JsonObject } from 'swagger-ui-express';
-import swaggerJsdoc from 'swagger-jsdoc';
-import { PathString } from './typings';
-import { ConfigMetadataStorage } from './storage/ConfigMetadataStorage';
-import { Runner } from './runners/Runner';
+import swaggerUi, { JsonObject } from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+import { PathString } from "./typings";
+import { ConfigMetadataStorage } from "./storage/ConfigMetadataStorage";
+import { Runner } from "./runners/Runner";
 
 /**
  * Implicit Express Server.
@@ -16,7 +16,7 @@ class App {
      */
     public init(config: ConfigMetadataStorage): void {
         this.app = config.expressApplication;
-        const swaggerDefinition: string = !config.relativePath ? config.swaggerDefinitionFilePath : process.cwd() + '/' + config.swaggerDefinitionFilePath;
+        const swaggerDefinition: string = !config.relativePath ? config.swaggerDefinitionFilePath : process.cwd() + "/" + config.swaggerDefinitionFilePath;
 
         this.run(swaggerDefinition, config.swaggerEndPointUrl);
     }

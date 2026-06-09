@@ -1,6 +1,6 @@
-import { DataTypes, Model } from 'sequelize';
-import { registerSchema } from 'swaggiffy';
-import { sequelize } from '../db';
+import { DataTypes, Model } from "sequelize";
+import { registerSchema } from "swaggiffy";
+import { sequelize } from "../db";
 
 export class User extends Model {
     declare id: number;
@@ -17,7 +17,7 @@ User.init(
         email: { type: DataTypes.STRING, allowNull: false, unique: true },
         password: { type: DataTypes.STRING, allowNull: false },
     },
-    { sequelize, tableName: 'users', timestamps: true },
+    { sequelize, tableName: "users", timestamps: true },
 );
 
-registerSchema('User', User.rawAttributes, { orm: 'sequelize' });
+registerSchema("User", User.rawAttributes, { orm: "sequelize" });

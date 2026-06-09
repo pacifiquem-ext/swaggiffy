@@ -1,14 +1,12 @@
-import * as express from 'express';
-import * as mongoose from 'mongoose';
-import { type } from 'os';
-import { Model } from 'sequelize';
+import * as express from "express";
+import * as mongoose from "mongoose";
 
 /**
  * Path String Type
  * Checks for a path starting with /{path}
  * Examples: /pets
  */
-export type PathString = `/${string | ''}`;
+export type PathString = `/${string | ""}`;
 
 /**
  * Ref String Type
@@ -51,7 +49,7 @@ export type TClassDef = {
  * Swagger Components/Definitions Type
  */
 export type TSwaggerType = {
-    type: 'object';
+    type: "object";
     properties: TSchemaProp;
 };
 
@@ -59,17 +57,17 @@ export type TSwaggerType = {
  * Swagger Schema Object Type
  */
 
-export type TSwaggerDataType = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object';
+export type TSwaggerDataType = "string" | "number" | "integer" | "boolean" | "array" | "object";
 
 /**
  * Valid string formats
  */
-export type TSwaggerStringFormats = 'date' | 'date-time' | 'password' | 'byte' | 'binary' | 'email' | 'uuid' | 'uri' | 'hostname' | 'ipv4' | 'ipv6';
+export type TSwaggerStringFormats = "date" | "date-time" | "password" | "byte" | "binary" | "email" | "uuid" | "uri" | "hostname" | "ipv4" | "ipv6";
 
 /**
  * Valid swagger number formats
  */
-export type TSwaggerNumberFormats = 'float' | 'double' | 'int32' | 'int64';
+export type TSwaggerNumberFormats = "float" | "double" | "int32" | "int64";
 
 export type TSwaggerSchemaObject = {
     // type: "integer" | "number" | "string" | "boolean" | "file";
@@ -114,7 +112,7 @@ export type TSwaggerSchemaDef = Record<string, TSwaggerType>;
  * The OpenAPI specification definition
  */
 export interface SwaggerSpecification {
-    swagger: '2.0' | '3.0';
+    swagger: "2.0" | "3.0";
     info: SwaggerInfo;
     host?: string;
     basePath?: string;
@@ -131,26 +129,26 @@ export interface SwaggerSpecification {
 }
 
 export enum ESchemas {
-    http = 'http',
-    https = 'https',
-    ws = 'ws',
-    wss = 'wss',
+    http = "http",
+    https = "https",
+    ws = "ws",
+    wss = "wss",
 }
 
 /**
  * Mime Type Enum
  */
 export type EMimeTypes =
-    | 'text/plain; charset=utf-8'
-    | 'application/json'
-    | 'application/vnd.github+json'
-    | 'application/vnd.github.v3+json'
-    | 'application/vnd.github.v3.raw+json'
-    | 'application/vnd.github.v3.text+json'
-    | 'application/vnd.github.v3.html+json'
-    | 'application/vnd.github.v3.full+json'
-    | 'application/vnd.github.v3.diff'
-    | 'application/vnd.github.v3.patch';
+    | "text/plain; charset=utf-8"
+    | "application/json"
+    | "application/vnd.github+json"
+    | "application/vnd.github.v3+json"
+    | "application/vnd.github.v3.raw+json"
+    | "application/vnd.github.v3.text+json"
+    | "application/vnd.github.v3.html+json"
+    | "application/vnd.github.v3.full+json"
+    | "application/vnd.github.v3.diff"
+    | "application/vnd.github.v3.patch";
 
 /**
  * Swagger Info Object
@@ -199,7 +197,7 @@ type TagObject = {
  * API Parameters for APIOperation
  */
 type APIParameters = {
-    in: 'query' | 'header' | 'path' | 'formData' | 'body';
+    in: "query" | "header" | "path" | "formData" | "body";
     name: string;
     type?: TSwaggerDataType;
     format?: TSwaggerNumberFormats | TSwaggerStringFormats;
@@ -222,15 +220,15 @@ type PathItemObject = {
     $ref?: RefString;
 };
 
-export type TOpenApiVersion = '2.0' | '3.0';
-export type TFormat = 'json' | 'yaml';
+export type TOpenApiVersion = "2.0" | "3.0";
+export type TFormat = "json" | "yaml";
 
 export type TemplateOptions = {
     projectName: ?string;
     outFile: ?string;
     apiRouteUrl: ?string;
-    openApiVersion: '2.0' | '3.0';
-    format: 'json' | 'yaml';
+    openApiVersion: "2.0" | "3.0";
+    format: "json" | "yaml";
 };
 
 /**
@@ -250,7 +248,7 @@ export type ConfigurationProps = {
  */
 export type APIPathDefinition = {
     pathString: string;
-    method: 'get' | 'post' | 'put' | 'delete';
+    method: "get" | "post" | "put" | "delete";
     tags: string[];
     meta: ApiPathDescription;
 };
@@ -268,7 +266,7 @@ export type ApiPathDescription = {
 
 export type SwaggerAPIDefinition = {
     [x: string]: {
-        [x: 'get' | 'post' | 'put' | 'delete']: ApiPathDescription;
+        [x: "get" | "post" | "put" | "delete"]: ApiPathDescription;
     };
 };
 
@@ -297,15 +295,15 @@ export type APIDefinitionOptions = {
 };
 
 export type SchemaRegistryObj = {
-    [key: string]: number | string | boolean | bigint | object | Date | undefined | Function | symbol;
+    [key: string]: number | string | boolean | bigint | object | Date | undefined | ((...args: unknown[]) => unknown) | symbol;
 };
 // Parameter types
 export type SchemaRegistryType = mongoose.Schema | SchemaRegistryObj;
 
-export type SchemaRegistryOptions = { required?: string[]; orm: 'mongoose' | 'sequelize' | 'prisma' | 'typeorm' };
+export type SchemaRegistryOptions = { required?: string[]; orm: "mongoose" | "sequelize" | "prisma" | "typeorm" };
 
 export type APIDefinitionRegistryObj = {
-    [key: string]: number | string | boolean | bigint | object | Date | undefined | Function | symbol;
+    [key: string]: number | string | boolean | bigint | object | Date | undefined | ((...args: unknown[]) => unknown) | symbol;
 };
 // Parameter types
 export type APIDefinitionRegistryType = mongoose.Schema | SchemaRegistryObj;

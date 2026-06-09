@@ -1,6 +1,6 @@
-import { APIDefinitionOptions, APIDocResponse, APIParameters, APIPathDefinition } from '../typings';
-import { getAPIDefinitionMetadataStorage } from '../globals';
-import { APIDefinitionMetadata } from '../storage/types/APIDefinitionMetadata';
+import { APIDefinitionOptions, APIDocResponse, APIParameters, APIPathDefinition } from "../typings";
+import { getAPIDefinitionMetadataStorage } from "../globals";
+import { APIDefinitionMetadata } from "../storage/types/APIDefinitionMetadata";
 
 interface RouterLike {
     stack: any[];
@@ -17,80 +17,80 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
         const method = item.route.stack[0].method.toLowerCase();
         const path = item.route.path;
 
-        let parameters: APIParameters[] = [];
+        const parameters: APIParameters[] = [];
         let responses: APIDocResponse = {};
 
         if (item.keys.length > 0) {
             for (const key of item.keys) {
                 parameters.push({
-                    in: 'path',
+                    in: "path",
                     name: key.name,
                     required: true,
-                    type: 'string',
+                    type: "string",
                 });
             }
         }
 
-        if (method == 'post' || method == 'put') {
+        if (method === "post" || method === "put") {
             parameters.push({
-                in: 'body',
-                name: 'body',
-                required: method == 'post' ? true : false,
+                in: "body",
+                name: "body",
+                required: method === "post" ? true : false,
                 schema: {
                     $ref: `#/definitions/${options.mappedSchema}`,
                 },
             });
         }
 
-        if (method == 'delete') {
+        if (method === "delete") {
             responses = {
-                '200': {
-                    description: 'OK',
+                "200": {
+                    description: "OK",
                     schema: {
-                        type: 'object',
+                        type: "object",
                         properties: {
                             deleted: {
-                                type: 'boolean',
+                                type: "boolean",
                                 example: true,
                             },
                         },
                     },
                 },
-                '500': {
-                    description: 'Internal Server Error',
+                "500": {
+                    description: "Internal Server Error",
                 },
             };
-        } else if (method == 'post' || method == 'put') {
+        } else if (method === "post" || method === "put") {
             responses = {
-                '201': {
-                    description: 'Created',
+                "201": {
+                    description: "Created",
                     schema: {
                         $ref: `#/definitions/${options.mappedSchema}`,
                     },
                 },
-                '500': {
-                    description: 'Internal Server Error',
+                "500": {
+                    description: "Internal Server Error",
                 },
             };
         } else {
             responses = {
-                '200': {
-                    description: 'OK',
+                "200": {
+                    description: "OK",
                     schema: {
-                        type: 'array',
+                        type: "array",
                         items: {
                             $ref: `#/definitions/${options.mappedSchema}`,
                         },
                     },
                 },
-                '500': {
-                    description: 'Internal Server Error',
+                "500": {
+                    description: "Internal Server Error",
                     schema: {
-                        type: 'object',
+                        type: "object",
                         properties: {
                             error: {
-                                type: 'string',
-                                example: 'Internal Server Error',
+                                type: "string",
+                                example: "Internal Server Error",
                             },
                         },
                     },
@@ -100,19 +100,19 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
 
         const pathDefinition: APIPathDefinition = {
             pathString: `${options.basePath}${path}`,
-            tags: options.tags?.split(' ') || [],
+            tags: options.tags?.split(" ") || [],
             method: method,
             meta: {
-                summary: options.summary || '',
-                description: options.description || '',
+                summary: options.summary || "",
+                description: options.description || "",
                 // operationId: `${method}`,
                 parameters: parameters,
-                produces: options.produces || ['application/json'],
-                consumes: options.consumes || ['application/json'],
+                produces: options.produces || ["application/json"],
+                consumes: options.consumes || ["application/json"],
                 responses,
                 security: [
                     {
-                        Bearer: ['global'],
+                        Bearer: ["global"],
                     },
                 ],
             },

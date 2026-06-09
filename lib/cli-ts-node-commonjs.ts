@@ -1,3 +1,4 @@
 #!/usr/bin/env node
-require('ts-node').register();
-import './cli';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require("ts-node").register();
+import "./cli";

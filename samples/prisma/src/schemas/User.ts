@@ -1,9 +1,9 @@
-import { Schema } from 'swaggiffy';
+import { Schema } from "swaggiffy";
 
-@Schema('User')
+@Schema("User")
 export class UserSchema {
-    id: number = 0;
-    name: string = '';
-    email: string = '';
+    id = 0;
+    name = "";
+    email = "";
     createdAt: Date = new Date();
 }

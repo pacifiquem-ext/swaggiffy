@@ -1,4 +1,4 @@
-import { APIDefinitionMetadata } from './types/APIDefinitionMetadata';
+import { APIDefinitionMetadata } from "./types/APIDefinitionMetadata";
 
 /**
  * Global storage for registered schemas

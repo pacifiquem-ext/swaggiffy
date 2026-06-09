@@ -1,5 +1,5 @@
-import { SwaggiffyError } from '../errors/SwaggiffyError';
-import { PathString, TFormat } from '../typings';
+import { SwaggiffyError } from "../errors/SwaggiffyError";
+import { PathString, TFormat } from "../typings";
 
 /**
  * Validation Utility Class
@@ -10,8 +10,8 @@ export class ValidationUtils {
      * @param filePath File Path
      */
     static cleanFilePath(filePath: string): string {
-        if (filePath.startsWith('/')) filePath = filePath.substring(1, filePath.length);
-        if (filePath.endsWith('/')) filePath = filePath.substring(0, filePath.lastIndexOf('/'));
+        if (filePath.startsWith("/")) filePath = filePath.substring(1, filePath.length);
+        if (filePath.endsWith("/")) filePath = filePath.substring(0, filePath.lastIndexOf("/"));
 
         return filePath;
     }
@@ -27,8 +27,8 @@ export class ValidationUtils {
             if (!filePath.endsWith(format)) throw new SwaggiffyError(`Invalid file type provided, You provided a file extension different from ${format}`);
         }
 
-        if (!filePath.endsWith('.json') && !filePath.endsWith('.yaml') && !filePath.endsWith('.yml'))
-            throw new SwaggiffyError('Invalid file type provided, file extensions other than [json, yaml, yml] are not allowed');
+        if (!filePath.endsWith(".json") && !filePath.endsWith(".yaml") && !filePath.endsWith(".yml"))
+            throw new SwaggiffyError("Invalid file type provided, file extensions other than [json, yaml, yml] are not allowed");
 
         return filePath;
     }
@@ -38,7 +38,7 @@ export class ValidationUtils {
      * @param routeUrl Route Url
      */
     static validateAPIRoute(routeUrl: string): PathString {
-        if (!routeUrl.startsWith('/')) throw new SwaggiffyError(`Invalid API route url format. Start with a '/'`);
+        if (!routeUrl.startsWith("/")) throw new SwaggiffyError(`Invalid API route url format. Start with a '/'`);
 
         return routeUrl as PathString;
     }
@@ -49,14 +49,14 @@ export class ValidationUtils {
      * @returns
      */
     static cleanSwaggerPathString(pathString: string): string {
-        if (pathString.includes('/:')) {
-            let split = pathString.split('/');
-            let map = split.map((path) => (path.startsWith(':') ? `{${path.substring(1)}}` : path));
-            pathString = map.join('/');
+        if (pathString.includes("/:")) {
+            const split = pathString.split("/");
+            const map = split.map((path) => (path.startsWith(":") ? `{${path.substring(1)}}` : path));
+            pathString = map.join("/");
         }
         let cleanPath: string = pathString;
-        if (pathString.startsWith('./')) cleanPath = pathString.replace('./', '');
-        if (pathString.endsWith('/')) cleanPath = pathString.slice(0, pathString.length - 1);
+        if (pathString.startsWith("./")) cleanPath = pathString.replace("./", "");
+        if (pathString.endsWith("/")) cleanPath = pathString.slice(0, pathString.length - 1);
 
         return cleanPath;
     }

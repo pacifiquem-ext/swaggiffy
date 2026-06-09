@@ -1,8 +1,8 @@
-import { registerSchema } from 'swaggiffy';
+import { registerSchema } from "swaggiffy";
 
-registerSchema('User', {
+registerSchema("User", {
     id: 0,
-    name: '',
-    email: '',
+    name: "",
+    email: "",
     createdAt: new Date(),
 });

@@ -1,14 +1,10 @@
-import * as express from 'express';
-import { APIPathDefinition, APIRegisterMeta, SchemaRegistryOptions, SchemaRegistryType, TClassDef, TClassProps, TSwaggerSchema } from '../typings';
-import { getAPIDefinitionMetadataStorage, getSchemaMetadataStorage } from '../globals';
-import { APIDefinitionMetadata } from '../storage/types/APIDefinitionMetadata';
-import { type } from 'os';
-import { Utility } from '../utils/Utility';
-import * as mongoose from 'mongoose';
-import { option } from 'yargs';
-import { SwaggiffyError } from '../errors/SwaggiffyError';
-import { SchemaExtractor } from '../extractors/schema.extractor';
-import { SchemaMetadata } from '../storage/types/SchemaMetadata';
+import { SchemaRegistryOptions, SchemaRegistryType, TClassDef, TSwaggerSchema } from "../typings";
+import { getSchemaMetadataStorage } from "../globals";
+import { Utility } from "../utils/Utility";
+import * as mongoose from "mongoose";
+import { SwaggiffyError } from "../errors/SwaggiffyError";
+import { SchemaExtractor } from "../extractors/schema.extractor";
+import { SchemaMetadata } from "../storage/types/SchemaMetadata";
 
 /**
  * Create swagger schema definition
@@ -25,12 +21,12 @@ export function registerSchema(name: string, schema: SchemaRegistryType, options
     let extractor: TClassDef | undefined;
 
     if (options) {
-        if (options.orm === 'mongoose') {
+        if (options.orm === "mongoose") {
             extractor = SchemaExtractor.extractMongoose(schema as mongoose.Schema, name);
-        } else if (options.orm === 'sequelize') {
+        } else if (options.orm === "sequelize") {
             extractor = SchemaExtractor.extractSequelize(schema, name);
         } else {
-            throw new SwaggiffyError('Orm is not supported');
+            throw new SwaggiffyError("Orm is not supported");
         }
     } else {
         if (schema instanceof mongoose.Schema) {
@@ -53,10 +49,10 @@ export function registerSchemas(schemas: SchemaParam[]) {
     let extractor: TClassDef | undefined;
     for (const _schema of schemas) {
         if (_schema.options) {
-            if (_schema.options.orm === 'mongoose') {
+            if (_schema.options.orm === "mongoose") {
                 extractor = SchemaExtractor.extractMongoose(_schema.schema as mongoose.Schema, _schema.name);
             } else {
-                throw new SwaggiffyError('Orm is not supported');
+                throw new SwaggiffyError("Orm is not supported");
             }
         } else {
             if (_schema.schema instanceof mongoose.Schema) {

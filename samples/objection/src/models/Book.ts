@@ -1,16 +1,16 @@
-import { Model } from 'objection';
-import { Schema } from 'swaggiffy';
+import { Model } from "objection";
+import { Schema } from "swaggiffy";
 
-@Schema('Book')
+@Schema("Book")
 export class Book extends Model {
-    static tableName = 'books';
+    static tableName = "books";
 
-    id: number = 0;
-    title: string = '';
-    author: string = '';
-    isbn: string = '';
-    year: number = 0;
-    available: boolean = true;
-    userId: number = 0;
+    id = 0;
+    title = "";
+    author = "";
+    isbn = "";
+    year = 0;
+    available = true;
+    userId = 0;
     createdAt: Date = new Date();
 }

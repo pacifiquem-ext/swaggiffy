@@ -43,16 +43,16 @@ export type Path = {
     };
 };
 
-export type HttpSchemes = 'http' | 'https';
-export type HttpMethods = 'get' | 'post' | 'put' | 'delete';
+export type HttpSchemes = "http" | "https";
+export type HttpMethods = "get" | "post" | "put" | "delete";
 export type MimeTypes =
-    | 'text/plain; charset=utf-8'
-    | 'application/json'
-    | 'application/vnd.github+json'
-    | 'application/vnd.github.v3+json'
-    | 'application/vnd.github.v3.raw+json'
-    | 'application/vnd.github.v3.text+json'
-    | 'application/vnd.github.v3.html+json'
-    | 'application/vnd.github.v3.full+json'
-    | 'application/vnd.github.v3.diff'
-    | 'application/vnd.github.v3.patch';
+    | "text/plain; charset=utf-8"
+    | "application/json"
+    | "application/vnd.github+json"
+    | "application/vnd.github.v3+json"
+    | "application/vnd.github.v3.raw+json"
+    | "application/vnd.github.v3.text+json"
+    | "application/vnd.github.v3.html+json"
+    | "application/vnd.github.v3.full+json"
+    | "application/vnd.github.v3.diff"
+    | "application/vnd.github.v3.patch";

@@ -1,9 +1,7 @@
-import { getAPIDefinitionMetadataStorage, getSchemaMetadataStorage } from '../globals';
-import { Utility } from '../utils/Utility';
-import { APIPathDefinition, SwaggerAPIDefinition, TSwaggerSchemaDef } from '../typings';
-import * as path from 'path';
-import { PlatformTools } from '../platform/PlatformTools';
-import { FileUtils } from '../utils/FileUtils';
+import { getAPIDefinitionMetadataStorage, getSchemaMetadataStorage } from "../globals";
+import { Utility } from "../utils/Utility";
+import { SwaggerAPIDefinition, TSwaggerSchemaDef } from "../typings";
+import { PlatformTools } from "../platform/PlatformTools";
 
 /**
  * Runner Class
@@ -15,8 +13,8 @@ export class Runner {
      */
     static generateSchemas(): void {
         const swaggerSchemaDefinition: TSwaggerSchemaDef = Utility.toSwaggerSchema(getSchemaMetadataStorage().schemas);
-        Utility.swaggiffy(swaggerSchemaDefinition, 'SCHEMA');
-        PlatformTools.logSuccess('Swagger Schemas generated successfully');
+        Utility.swaggiffy(swaggerSchemaDefinition, "SCHEMA");
+        PlatformTools.logSuccess("Swagger Schemas generated successfully");
     }
 
     /**
@@ -25,8 +23,8 @@ export class Runner {
      */
     static generateAPIDefinitions(): void {
         const pathDefinition: SwaggerAPIDefinition = Utility.toSwaggerAPIDefinition(getAPIDefinitionMetadataStorage().apiDefinitions);
-        Utility.swaggiffy(pathDefinition, 'DEFINITION');
-        PlatformTools.logSuccess('Swagger API Definitions generated successfully');
+        Utility.swaggiffy(pathDefinition, "DEFINITION");
+        PlatformTools.logSuccess("Swagger API Definitions generated successfully");
     }
 
     static execute(): void {

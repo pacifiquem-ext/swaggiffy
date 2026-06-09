@@ -1,18 +1,18 @@
-import { Router } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { eq } from 'drizzle-orm';
-import { registerDefinition } from 'swaggiffy';
-import { db } from '../db';
-import { users } from '../schema';
+import { Router } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { eq } from "drizzle-orm";
+import { registerDefinition } from "swaggiffy";
+import { db } from "../db";
+import { users } from "../schema";
 
 const router = Router();
 
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const [exists] = await db.select().from(users).where(eq(users.email, email));
-        if (exists) return res.status(409).json({ error: 'Email already registered' });
+        if (exists) return res.status(409).json({ error: "Email already registered" });
 
         const [user] = await db
             .insert(users)
@@ -20,8 +20,8 @@ router.post('/register', async (req, res) => {
             .returning({ id: users.id, name: users.name, email: users.email });
         const token = jwt.sign(
             { id: user.id, email: user.email },
-            process.env.JWT_SECRET || 'secret',
-            { expiresIn: (process.env.JWT_EXPIRES_IN || '24h') as any },
+            process.env.JWT_SECRET || "secret",
+            { expiresIn: (process.env.JWT_EXPIRES_IN || "24h") as any },
         );
         return res.status(201).json({ token, user });
     } catch (err: any) {
@@ -29,17 +29,17 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
         const [user] = await db.select().from(users).where(eq(users.email, email));
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+            return res.status(401).json({ error: "Invalid credentials" });
         }
         const token = jwt.sign(
             { id: user.id, email: user.email },
-            process.env.JWT_SECRET || 'secret',
-            { expiresIn: (process.env.JWT_EXPIRES_IN || '24h') as any },
+            process.env.JWT_SECRET || "secret",
+            { expiresIn: (process.env.JWT_EXPIRES_IN || "24h") as any },
         );
         return res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
     } catch (err: any) {
@@ -48,10 +48,10 @@ router.post('/login', async (req, res) => {
 });
 
 registerDefinition(router, {
-    basePath: '/api/auth',
-    mappedSchema: 'User',
-    tags: 'Auth',
-    summary: 'Authentication endpoints',
+    basePath: "/api/auth",
+    mappedSchema: "User",
+    tags: "Auth",
+    summary: "Authentication endpoints",
 });
 
 export { router as authRouter };
