@@ -16,7 +16,7 @@
     "declaration": true,    
 		"typeRoots": ["@types", "node_modules/@types"]
   },
-  "include": ["lib", "test"],
+  "include": ["lib", "test", "benchmarks"],
   "exclude": [
     "node_modules"
   ]
