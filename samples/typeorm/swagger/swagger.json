@@ -1,0 +1,23 @@
+{
+   "swaggerDefinition": {
+      "swagger": "2.0",
+      "info": {
+         "title": "TypeORM Task Manager API",
+         "description": "Task Manager API using TypeORM + PostgreSQL documented by Swaggiffy",
+         "version": "1.0.0"
+      },
+      "host": "localhost:3003",
+      "basePath": "/",
+      "schemes": ["http"],
+      "securityDefinitions": {
+         "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+         }
+      },
+      "paths": {},
+      "definitions": {}
+   },
+   "apis": []
+}

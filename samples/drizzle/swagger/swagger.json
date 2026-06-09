@@ -1,0 +1,582 @@
+{
+  "swaggerDefinition": {
+    "swagger": "2.0",
+    "info": {
+      "title": "Drizzle Events API",
+      "description": "Events API using Drizzle ORM + PostgreSQL documented by Swaggiffy",
+      "version": "1.0.0"
+    },
+    "host": "localhost:3007",
+    "basePath": "/",
+    "schemes": [
+      "http"
+    ],
+    "securityDefinitions": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "paths": {
+      "/api/auth/register": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "summary": "Authentication endpoints",
+          "description": "",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        }
+      },
+      "/api/auth/login": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "summary": "Authentication endpoints",
+          "description": "",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        }
+      },
+      "/api/users": {
+        "get": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "User management",
+          "description": "",
+          "parameters": [],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        }
+      },
+      "/api/users/{id}": {
+        "get": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "User management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "User management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "required": false,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "User management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deleted": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        }
+      },
+      "/api/events": {
+        "get": {
+          "tags": [
+            "Events"
+          ],
+          "summary": "Event management",
+          "description": "",
+          "parameters": [],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Event"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "Events"
+          ],
+          "summary": "Event management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Event"
+              }
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/Event"
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        }
+      },
+      "/api/events/{id}": {
+        "get": {
+          "tags": [
+            "Events"
+          ],
+          "summary": "Event management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Event"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": {
+                    "type": "string",
+                    "example": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "Events"
+          ],
+          "summary": "Event management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "required": false,
+              "schema": {
+                "$ref": "#/definitions/Event"
+              }
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/Event"
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "Events"
+          ],
+          "summary": "Event management",
+          "description": "",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deleted": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          },
+          "security": [
+            {
+              "Bearer": [
+                "global"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "object"
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "date": {
+            "type": "object"
+          },
+          "capacity": {
+            "type": "number"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "userId": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "apis": []
+}

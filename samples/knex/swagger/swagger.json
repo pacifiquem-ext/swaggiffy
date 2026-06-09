@@ -1,0 +1,23 @@
+{
+   "swaggerDefinition": {
+      "swagger": "2.0",
+      "info": {
+         "title": "Knex Inventory API",
+         "description": "Inventory API using Knex + PostgreSQL documented by Swaggiffy",
+         "version": "1.0.0"
+      },
+      "host": "localhost:3005",
+      "basePath": "/",
+      "schemes": ["http"],
+      "securityDefinitions": {
+         "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+         }
+      },
+      "paths": {},
+      "definitions": {}
+   },
+   "apis": []
+}

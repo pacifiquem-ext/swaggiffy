@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "swaggiffy": ["../../lib"],
+      "swaggiffy/*": ["../../lib/*"]
+    }
+  },
+  "include": ["src/**/*", "drizzle.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "swaggiffy-sample-prisma",
+  "version": "1.0.0",
+  "description": "Swaggiffy sample: CMS API using Prisma + PostgreSQL",
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register src/app.ts",
+    "dev": "nodemon --ignore '**/swagger.json' --exec \"ts-node -r tsconfig-paths/register src/app.ts\"",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev --name init",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.3.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.4",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.3",
+    "@types/node": "^20.8.0",
+    "nodemon": "^3.0.1",
+    "prisma": "^5.3.1",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
+  }
+}

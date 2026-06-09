@@ -1,0 +1,23 @@
+{
+   "swaggerDefinition": {
+      "swagger": "2.0",
+      "info": {
+         "title": "Mongoose Blog API",
+         "description": "Blog API using Mongoose + MongoDB documented by Swaggiffy",
+         "version": "1.0.0"
+      },
+      "host": "localhost:3001",
+      "basePath": "/",
+      "schemes": ["http"],
+      "securityDefinitions": {
+         "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+         }
+      },
+      "paths": {},
+      "definitions": {}
+   },
+   "apis": []
+}

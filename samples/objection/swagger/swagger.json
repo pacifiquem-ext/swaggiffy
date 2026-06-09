@@ -1,0 +1,23 @@
+{
+   "swaggerDefinition": {
+      "swagger": "2.0",
+      "info": {
+         "title": "Objection Library API",
+         "description": "Library API using Objection.js + PostgreSQL documented by Swaggiffy",
+         "version": "1.0.0"
+      },
+      "host": "localhost:3006",
+      "basePath": "/",
+      "schemes": ["http"],
+      "securityDefinitions": {
+         "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+         }
+      },
+      "paths": {},
+      "definitions": {}
+   },
+   "apis": []
+}
