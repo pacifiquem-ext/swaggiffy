@@ -6,19 +6,19 @@ import { User } from "./User";
 @Entity("tasks")
 export class Task {
     @PrimaryGeneratedColumn()
-    id = 0;
+    id: number = 0;
 
     @Column()
-    title = "";
+    title: string = "";
 
     @Column({ nullable: true })
-    description = "";
+    description: string = "";
 
     @Column({ default: false })
-    completed = false;
+    completed: boolean = false;
 
     @Column()
-    userId = 0;
+    userId: number = 0;
 
     @CreateDateColumn()
     createdAt: Date = new Date();

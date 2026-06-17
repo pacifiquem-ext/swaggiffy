@@ -1,6 +1,7 @@
 {
   "name": "swaggiffy-sample-prisma",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "Swaggiffy sample: CMS API using Prisma + PostgreSQL",
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register src/app.ts",

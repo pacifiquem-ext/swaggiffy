@@ -5,16 +5,16 @@ import { Schema } from "swaggiffy";
 @Entity("users")
 export class User {
     @PrimaryGeneratedColumn()
-    id = 0;
+    id: number = 0;
 
     @Column()
-    name = "";
+    name: string = "";
 
     @Column({ unique: true })
-    email = "";
+    email: string = "";
 
     @Column()
-    password = "";
+    password: string = "";
 
     @CreateDateColumn()
     createdAt: Date = new Date();

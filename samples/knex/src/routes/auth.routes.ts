@@ -1,10 +1,13 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 import { registerDefinition } from "swaggiffy";
 import { db, dbInsert } from "../db";
 
 const router = Router();
+
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
+const JWT_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || "24h") as SignOptions["expiresIn"];
 
 router.post("/register", async (req, res) => {
     try {
@@ -15,8 +18,8 @@ router.post("/register", async (req, res) => {
         const user = await dbInsert("users", { name, email, password: await bcrypt.hash(password, 10) }, "id, name, email");
         const token = jwt.sign(
             { id: user.id, email: user.email },
-            process.env.JWT_SECRET || "secret",
-            { expiresIn: process.env.JWT_EXPIRES_IN || "24h" },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN },
         );
         return res.status(201).json({ token, user });
     } catch (err: any) {
@@ -33,8 +36,8 @@ router.post("/login", async (req, res) => {
         }
         const token = jwt.sign(
             { id: user.id, email: user.email },
-            process.env.JWT_SECRET || "secret",
-            { expiresIn: process.env.JWT_EXPIRES_IN || "24h" },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN },
         );
         return res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
     } catch (err: any) {

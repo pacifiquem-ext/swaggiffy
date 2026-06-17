@@ -1,7 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Model } from "mongoose";
 import { registerSchema } from "swaggiffy";
 
-const postSchema = new mongoose.Schema({
+export interface IPost extends Document {
+    title: string;
+    content: string;
+    author: mongoose.Types.ObjectId;
+    tags: string[];
+    published: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+const postSchema = new mongoose.Schema<IPost>({
     title: { type: String, required: true },
     content: { type: String, required: true },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -13,4 +23,4 @@ const postSchema = new mongoose.Schema({
 
 registerSchema("Post", postSchema, { orm: "mongoose" });
 
-export const Post = mongoose.model("Post", postSchema);
+export const Post: Model<IPost> = mongoose.model<IPost>("Post", postSchema);
