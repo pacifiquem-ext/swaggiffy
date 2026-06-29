@@ -32,5 +32,5 @@ export class Defaults {
     /**
      * Default Swagger Definition File Format
      */
-    public static OPENAPI_VERSION: TOpenApiVersion = "2.0";
+    public static OPENAPI_VERSION: TOpenApiVersion = "3.0";
 }

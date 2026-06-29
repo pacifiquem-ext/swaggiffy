@@ -1,579 +1,509 @@
 {
-  "swaggerDefinition": {
-    "swagger": "2.0",
-    "info": {
-      "title": "Knex Inventory API",
-      "description": "Inventory API using Knex + PostgreSQL documented by Swaggiffy",
-      "version": "1.0.0"
+  "swagger": "2.0",
+  "info": {
+    "title": "Knex Inventory API",
+    "description": "Knex Inventory API API Documentation",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "API Support",
+      "url": "http://www.swagger.io/support",
+      "email": "support@swagger.io"
     },
-    "host": "localhost:3005",
-    "basePath": "/",
-    "schemes": [
-      "http"
-    ],
-    "securityDefinitions": {
-      "Bearer": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "host": "localhost:5008",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authentication endpoints",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
-    "paths": {
-      "/api/auth/register": {
-        "post": {
-          "tags": [
-            "Auth"
-          ],
-          "summary": "Authentication endpoints",
-          "description": "",
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authentication endpoints",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
             }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "201": {
-              "description": "Created",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/User"
             }
           },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        }
-      },
-      "/api/auth/login": {
-        "post": {
-          "tags": [
-            "Auth"
-          ],
-          "summary": "Authentication endpoints",
-          "description": "",
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "201": {
-              "description": "Created",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        }
-      },
-      "/api/users": {
-        "get": {
-          "tags": [
-            "Users"
-          ],
-          "summary": "User management",
-          "description": "",
-          "parameters": [],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/User"
-                }
-              }
-            },
-            "500": {
-              "description": "Internal Server Error",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "error": {
-                    "type": "string",
-                    "example": "Internal Server Error"
-                  }
-                }
-              }
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        }
-      },
-      "/api/users/{id}": {
-        "get": {
-          "tags": [
-            "Users"
-          ],
-          "summary": "User management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/User"
-                }
-              }
-            },
-            "500": {
-              "description": "Internal Server Error",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "error": {
-                    "type": "string",
-                    "example": "Internal Server Error"
-                  }
-                }
-              }
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
-        "put": {
-          "tags": [
-            "Users"
-          ],
-          "summary": "User management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "in": "body",
-              "name": "body",
-              "required": false,
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "201": {
-              "description": "Created",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        },
-        "delete": {
-          "tags": [
-            "Users"
-          ],
-          "summary": "User management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "deleted": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        }
-      },
-      "/api/items": {
-        "get": {
-          "tags": [
-            "Items"
-          ],
-          "summary": "Inventory item management",
-          "description": "",
-          "parameters": [],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Item"
-                }
-              }
-            },
-            "500": {
-              "description": "Internal Server Error",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "error": {
-                    "type": "string",
-                    "example": "Internal Server Error"
-                  }
-                }
-              }
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        },
-        "post": {
-          "tags": [
-            "Items"
-          ],
-          "summary": "Inventory item management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/Item"
-              }
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "201": {
-              "description": "Created",
-              "schema": {
-                "$ref": "#/definitions/Item"
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        }
-      },
-      "/api/items/{id}": {
-        "get": {
-          "tags": [
-            "Items"
-          ],
-          "summary": "Inventory item management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Item"
-                }
-              }
-            },
-            "500": {
-              "description": "Internal Server Error",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "error": {
-                    "type": "string",
-                    "example": "Internal Server Error"
-                  }
-                }
-              }
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        },
-        "put": {
-          "tags": [
-            "Items"
-          ],
-          "summary": "Inventory item management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "in": "body",
-              "name": "body",
-              "required": false,
-              "schema": {
-                "$ref": "#/definitions/Item"
-              }
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "201": {
-              "description": "Created",
-              "schema": {
-                "$ref": "#/definitions/Item"
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        },
-        "delete": {
-          "tags": [
-            "Items"
-          ],
-          "summary": "Inventory item management",
-          "description": "",
-          "parameters": [
-            {
-              "in": "path",
-              "name": "id",
-              "required": true,
-              "type": "string"
-            }
-          ],
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "OK",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "deleted": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                }
-              }
-            },
-            "500": {
-              "description": "Internal Server Error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": [
-                "global"
-              ]
-            }
-          ]
-        }
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
-    "definitions": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
+    "/api/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User management",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
           },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "object"
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              }
+            }
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       },
-      "Item": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
-          },
-          "name": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
             "type": "string"
           },
-          "description": {
-            "type": "string"
-          },
-          "quantity": {
-            "type": "number"
-          },
-          "price": {
-            "type": "number"
-          },
-          "userId": {
-            "type": "number"
-          },
-          "createdAt": {
-            "type": "object"
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           }
-        }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/items": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Inventory item management",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Item"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              }
+            }
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "post": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Inventory item management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/items/{id}": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Inventory item management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Item"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Internal Server Error"
+                }
+              }
+            }
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Inventory item management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Item"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Inventory item management",
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deleted": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     }
   },
-  "apis": []
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "object"
+        }
+      }
+    },
+    "Item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "price": {
+          "type": "number"
+        },
+        "userId": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "object"
+        }
+      }
+    }
+  }
 }

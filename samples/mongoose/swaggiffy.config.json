@@ -1,7 +1,7 @@
 {
    "projectName": "Mongoose Blog API",
-   "openApiVersion": "2.0",
-   "outFile": "./swagger/swagger.json",
+   "openApiVersion": "3.0",
+   "outFile": "./swagger/swagger.yaml",
    "apiRoute": "/api-docs",
-   "format": "json"
+   "format": "yaml"
 }

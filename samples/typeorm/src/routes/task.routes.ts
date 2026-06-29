@@ -65,6 +65,13 @@ registerDefinition(router, {
     mappedSchema: "Task",
     tags: "Tasks",
     summary: "Task management",
+    description: "CRUD for tasks. Requires X-Request-ID on every call for tracing.",
+    // Demonstrates header parameter inspection + v3 requestBody on POST/PUT
+    parameters: [
+        { in: "header", name: "X-Request-ID", required: false, type: "string", description: "Client request correlation id" },
+        { in: "header", name: "X-Auth-Token", required: true, type: "string", description: "Session token header" },
+    ],
+    security: [{ bearerAuth: [] }],
 });
 
 export { router as taskRouter };

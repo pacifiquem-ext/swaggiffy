@@ -7,9 +7,10 @@ interface RouterLike {
 }
 
 /**
- * Create swagger path definition
- * @param router Express router
- * @returns apiPathDefinitions {APIPathDefinition}
+ * Create swagger path definition from an Express router.
+ * Path parameters are inferred from route keys; query/header/cookie/formData
+ * come from APIDefinitionOptions.parameters. Security is only applied when
+ * explicitly passed in options.
  */
 export function registerDefinition(router: RouterLike, options: APIDefinitionOptions) {
     const paths = router.stack.filter((item) => item.route);
@@ -20,7 +21,7 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
         const parameters: APIParameters[] = [];
         let responses: APIDocResponse = {};
 
-        if (item.keys.length > 0) {
+        if (item.keys && item.keys.length > 0) {
             for (const key of item.keys) {
                 parameters.push({
                     in: "path",
@@ -31,18 +32,28 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
             }
         }
 
-        if (method === "post" || method === "put") {
+        // User-declared parameters (query, header, cookie, formData, etc.)
+        if (options.parameters && options.parameters.length > 0) {
+            for (const param of options.parameters) {
+                parameters.push({ ...param });
+            }
+        }
+
+        // Intermediate body representation (converted to requestBody for OpenAPI 3 in Utility)
+        if (method === "post" || method === "put" || method === "patch") {
             parameters.push({
                 in: "body",
                 name: "body",
-                required: method === "post" ? true : false,
+                required: method === "post",
                 schema: {
                     $ref: `#/definitions/${options.mappedSchema}`,
                 },
             });
         }
 
-        if (method === "delete") {
+        if (options.responses) {
+            responses = options.responses;
+        } else if (method === "delete") {
             responses = {
                 "200": {
                     description: "OK",
@@ -60,7 +71,7 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
                     description: "Internal Server Error",
                 },
             };
-        } else if (method === "post" || method === "put") {
+        } else if (method === "post" || method === "put" || method === "patch") {
             responses = {
                 "201": {
                     description: "Created",
@@ -101,20 +112,15 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
         const pathDefinition: APIPathDefinition = {
             pathString: `${options.basePath}${path}`,
             tags: options.tags?.split(" ") || [],
-            method: method,
+            method: method as APIPathDefinition["method"],
             meta: {
                 summary: options.summary || "",
                 description: options.description || "",
-                // operationId: `${method}`,
                 parameters: parameters,
                 produces: options.produces || ["application/json"],
                 consumes: options.consumes || ["application/json"],
                 responses,
-                security: [
-                    {
-                        Bearer: ["global"],
-                    },
-                ],
+                ...(options.security ? { security: options.security } : {}),
             },
         };
 
@@ -124,9 +130,3 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
         } as APIDefinitionMetadata);
     });
 }
-
-// export function registerDefinitions(registerMetas: APIRegisterMeta[]) {
-//     registerMetas.forEach((_meta) => {
-//         registerDefinition(_meta);
-//     });
-// }

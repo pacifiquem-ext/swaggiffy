@@ -45,11 +45,19 @@ router.delete("/:id", authenticate, async (req, res) => {
     }
 });
 
+// Protected routes — explicit bearer security (no hardcoded scopes)
 registerDefinition(router, {
     basePath: "/api/users",
     mappedSchema: "User",
     tags: "Users",
-    summary: "User management",
+    summary: "User management (authenticated)",
+    description: "Requires a Bearer JWT obtained from /api/auth/login.",
+    security: [{ bearerAuth: [] }],
+    responses: {
+        "200": { description: "Success" },
+        "401": { description: "Unauthorized" },
+        "500": { description: "Internal Server Error" },
+    },
 });
 
 export { router as userRouter };

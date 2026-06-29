@@ -58,7 +58,9 @@ registerDefinition(router, {
     basePath: "/api/products",
     mappedSchema: "Product",
     tags: "Products",
-    summary: "Product catalog management",
+    summary: "Product catalog management (authenticated writes)",
+    description: "List is public in the sample app; mutations require Bearer auth at the route middleware.",
+    security: [{ bearerAuth: [] }],
 });
 
 export { router as productRouter };

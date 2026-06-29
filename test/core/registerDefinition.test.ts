@@ -142,4 +142,36 @@ describe("registerDefinition", () => {
         const storage = getAPIDefinitionMetadataStorage();
         expect(storage.apiDefinitions).to.have.length(5);
     });
+
+    it("does not inject security when none is configured", () => {
+        const router = makeRouter([{ method: "get", path: "/" }]);
+        registerDefinition(router, { basePath: "/api/public", mappedSchema: "User", tags: "Public" });
+        const def = getAPIDefinitionMetadataStorage().apiDefinitions[0].apiDefinition;
+        expect(def.meta.security).to.be.undefined;
+    });
+
+    it("stores explicit security exactly as provided", () => {
+        const router = makeRouter([{ method: "get", path: "/" }]);
+        const security = [{ Bearer: ["read"] }];
+        registerDefinition(router, {
+            basePath: "/api/secure",
+            mappedSchema: "User",
+            tags: "Secure",
+            security,
+        });
+        const def = getAPIDefinitionMetadataStorage().apiDefinitions[0].apiDefinition;
+        expect(def.meta.security).to.deep.equal(security);
+    });
+
+    it("merges user-declared header parameters", () => {
+        const router = makeRouter([{ method: "get", path: "/" }]);
+        registerDefinition(router, {
+            basePath: "/api/tasks",
+            mappedSchema: "Task",
+            tags: "Tasks",
+            parameters: [{ in: "header", name: "X-Auth-Token", required: true, type: "string" }],
+        });
+        const params = getAPIDefinitionMetadataStorage().apiDefinitions[0].apiDefinition.meta.parameters || [];
+        expect(params.some((p) => p.in === "header" && p.name === "X-Auth-Token")).to.equal(true);
+    });
 });

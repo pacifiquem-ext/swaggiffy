@@ -194,26 +194,29 @@ type TagObject = {
 };
 
 /**
+ * OpenAPI / Swagger parameter locations
+ */
+export type APIParameterIn = "query" | "header" | "path" | "formData" | "body" | "cookie";
+
+/**
+ * Security requirement object (scheme name → scopes)
+ */
+export type APISecurityRequirement = Record<string, string[]>;
+
+/**
  * API Parameters for APIOperation
  */
-type APIParameters = {
-    in: "query" | "header" | "path" | "formData" | "body";
+export type APIParameters = {
+    in: APIParameterIn;
     name: string;
     type?: TSwaggerDataType;
     format?: TSwaggerNumberFormats | TSwaggerStringFormats;
-    required: boolean;
+    required?: boolean;
     description?: string;
     schema?: {
-        $ref: string;
+        $ref?: string;
+        type?: TSwaggerDataType;
     };
-    required?: boolean;
-};
-
-/**
- * API Parameters when in prop is 'body'
- */
-type APIParametersInBody = APIParameters & {
-    schema: TSwaggerSchemaObject | RefString;
 };
 
 type PathItemObject = {
@@ -248,7 +251,7 @@ export type ConfigurationProps = {
  */
 export type APIPathDefinition = {
     pathString: string;
-    method: "get" | "post" | "put" | "delete";
+    method: "get" | "post" | "put" | "delete" | "patch";
     tags: string[];
     meta: ApiPathDescription;
 };
@@ -258,10 +261,11 @@ export type ApiPathDescription = {
     operationId?: string;
     description: string;
     parameters?: APIParameters[];
-    produces: Array<EMimeTypes>;
-    consumes: Array<EMimeTypes>;
+    produces?: Array<EMimeTypes>;
+    consumes?: Array<EMimeTypes>;
     responses: APIDocResponse;
-    security: Record<string, string[]>[];
+    /** Only set when the user explicitly configures security */
+    security?: APISecurityRequirement[];
 };
 
 export type SwaggerAPIDefinition = {
@@ -292,15 +296,38 @@ export type APIDefinitionOptions = {
     produces?: Array<EMimeTypes>;
     consumes?: Array<EMimeTypes>;
     responses?: APIDocResponse;
+    /**
+     * Explicit security requirements for all routes on this router.
+     * When omitted, no security field is written to the generated operation.
+     */
+    security?: APISecurityRequirement[];
+    /**
+     * Extra parameters (query, header, cookie, formData) declared by the user.
+     * Path parameters are still inferred from Express route keys.
+     */
+    parameters?: APIParameters[];
 };
 
 export type SchemaRegistryObj = {
     [key: string]: number | string | boolean | bigint | object | Date | undefined | ((...args: unknown[]) => unknown) | symbol;
 };
-// Parameter types
-export type SchemaRegistryType = mongoose.Schema | SchemaRegistryObj;
+/**
+ * Accepts Mongoose schemas, plain objects, entity classes, and ORM table definitions
+ * (TypeORM entities, Drizzle tables, Sequelize models, etc.).
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SchemaRegistryType = mongoose.Schema | SchemaRegistryObj | (new (...args: any[]) => any) | object;
 
-export type SchemaRegistryOptions = { required?: string[]; orm: "mongoose" | "sequelize" | "prisma" | "typeorm" };
+export type SchemaOrm =
+    | "mongoose"
+    | "sequelize"
+    | "prisma"
+    | "typeorm"
+    | "knex"
+    | "objection"
+    | "drizzle";
+
+export type SchemaRegistryOptions = { required?: string[]; orm?: SchemaOrm };
 
 export type APIDefinitionRegistryObj = {
     [key: string]: number | string | boolean | bigint | object | Date | undefined | ((...args: unknown[]) => unknown) | symbol;

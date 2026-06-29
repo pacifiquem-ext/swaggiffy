@@ -35,8 +35,21 @@ export class InitRunner {
             const config: ConfigurationProps = await this.extractConfigurations();
 
             if (!FileUtils.fileOrDirectoryExists(config.outFile)) {
-                if (config.openApiVersion.includes("2.")) await SetupRunner.generateSpecFile(Templates.getOSA2Template());
-                else if (config.openApiVersion.includes("3.")) await SetupRunner.generateSpecFile(Templates.getOSA3Template());
+                let template: string;
+                if (config.openApiVersion.includes("2.")) template = Templates.getOSA2Template(config.projectName);
+                else template = Templates.getOSA3Template(config.projectName);
+
+                // Write YAML when format is yaml
+                if (config.format === "yaml") {
+                    const { SpecFile } = await import("../utils/SpecFile");
+                    const doc = JSON.parse(template) as Record<string, unknown>;
+                    const path = config.outFile.startsWith("/") ? config.outFile : process.cwd() + "/" + config.outFile.replace(/^\.\//, "");
+                    const { FileUtils: FU } = await import("../utils/FileUtils");
+                    await FU.createFileInWorkspace(config.outFile, true);
+                    SpecFile.write(path, doc, "yaml");
+                } else {
+                    await SetupRunner.generateSpecFile(template, config.outFile);
+                }
             }
 
             setConfigMetadataStorage(config);

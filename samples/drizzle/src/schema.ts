@@ -21,5 +21,5 @@ export const events = pgTable("events", {
     createdAt: timestamp("created_at").defaultNow(),
 });
 
-registerSchema("User", { id: 0, name: "", email: "", createdAt: new Date() });
-registerSchema("Event", { id: 0, title: "", description: "", location: "", date: new Date(), capacity: 0, published: false, userId: 0 });
+registerSchema("User", users, { orm: "drizzle" });
+registerSchema("Event", events, { orm: "drizzle" });

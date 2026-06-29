@@ -48,11 +48,13 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// Public routes — no security field on generated operations
 registerDefinition(router, {
     basePath: "/api/auth",
     mappedSchema: "User",
     tags: "Auth",
-    summary: "Authentication endpoints",
+    summary: "Authentication endpoints (public)",
+    description: "Register and login do not require a bearer token.",
 });
 
 export { router as authRouter };

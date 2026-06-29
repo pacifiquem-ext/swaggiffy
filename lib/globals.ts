@@ -59,4 +59,5 @@ export function setConfigMetadataStorage(config: ConfigurationProps): void {
     storage.openApiVersion = config.openApiVersion;
     storage.swaggerDefinitionFilePath = config.outFile;
     storage.swaggerEndPointUrl = config.apiRoute;
+    storage.relativePath = config.relativePath !== false;
 }

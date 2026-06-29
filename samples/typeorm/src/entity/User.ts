@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
-import { Schema } from "swaggiffy";
+import { registerSchema } from "swaggiffy";
 
-@Schema("User")
 @Entity("users")
 export class User {
     @PrimaryGeneratedColumn()
@@ -19,3 +18,5 @@ export class User {
     @CreateDateColumn()
     createdAt: Date = new Date();
 }
+
+registerSchema("User", User, { orm: "typeorm" });

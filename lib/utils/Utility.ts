@@ -1,5 +1,6 @@
 import { SchemaMetadata } from "../storage/types/SchemaMetadata";
 import {
+    APIParameters,
     SwaggerAPIDefinition,
     TClassDef,
     TSchemaProp,
@@ -9,19 +10,14 @@ import {
     TSwaggerSchemaDef,
     TSwaggerStringFormats,
 } from "../typings";
-import { PlatformTools } from "../platform/PlatformTools";
 import { ConfigMetadataStorage } from "../storage/ConfigMetadataStorage";
 import { getConfigMetadataStorage } from "../globals";
 import { APIDefinitionMetadata } from "../storage/types/APIDefinitionMetadata";
 import mongoose from "mongoose";
 import { ValidationUtils } from "./ValidationUtils";
+import { SpecFile } from "./SpecFile";
 
 export class Utility {
-    /**
-     * Returns target Class properties
-     * @param _class
-     * @returns Target class properties
-     */
     static configStore: ConfigMetadataStorage = getConfigMetadataStorage();
 
     /**
@@ -53,50 +49,75 @@ export class Utility {
     }
 
     /**
-     * Extracts Swagger Schema Object from JSON
-     * @param swagger JSON Document
-     * @params schema: new swaggified schemas
-     * @returns schema object
+     * Apply schema definitions onto a valid OpenAPI/Swagger document.
+     * Uses components.schemas for v3 and definitions for v2.
      */
-    static updateSchema(swaggerDoc: Buffer, schema: TSwaggerSchemaDef): string {
-        const parsed = JSON.parse(swaggerDoc.toString());
-        parsed.swaggerDefinition.definitions = schema;
-        return JSON.stringify(parsed, null, 2);
+    static applySchemas(doc: Record<string, unknown>, schema: TSwaggerSchemaDef): Record<string, unknown> {
+        if (SpecFile.isOpenApiV3(doc) || Utility.isOpenApiV3Config()) {
+            const components = (doc.components as Record<string, unknown>) || {};
+            components.schemas = schema;
+            doc.components = components;
+            // Ensure we are not leaving a legacy wrapper behind
+            delete doc.swaggerDefinition;
+            delete doc.apis;
+            if (!doc.openapi) doc.openapi = "3.0.0";
+            delete doc.swagger;
+            delete doc.definitions;
+        } else {
+            doc.definitions = schema;
+            delete doc.swaggerDefinition;
+            delete doc.apis;
+            if (!doc.swagger) doc.swagger = "2.0";
+            delete doc.openapi;
+        }
+        return doc;
     }
 
     /**
-     * Extracts Swagger Schema Object from JSON
-     * @param swagger JSON Document
-     * @params schema: new swaggified schemas
-     * @returns schema object
+     * Apply path definitions onto a valid OpenAPI/Swagger document.
      */
-    static updateAPIDefinition(swaggerDoc: Buffer, apiDefinition: SwaggerAPIDefinition): string {
-        const parsed = JSON.parse(swaggerDoc.toString());
-        parsed.swaggerDefinition.paths = apiDefinition;
-        return JSON.stringify(parsed, null, 2);
+    static applyPaths(doc: Record<string, unknown>, apiDefinition: SwaggerAPIDefinition): Record<string, unknown> {
+        doc.paths = apiDefinition;
+        delete doc.swaggerDefinition;
+        delete doc.apis;
+        return doc;
+    }
+
+    private static isOpenApiV3Config(): boolean {
+        const v = Utility.configStore.openApiVersion;
+        return typeof v === "string" && v.includes("3.");
+    }
+
+    private static resolveFilePath(): string {
+        const path = Utility.configStore.swaggerDefinitionFilePath;
+        if (Utility.configStore.relativePath !== false && !path.startsWith("/")) {
+            return process.cwd() + "/" + path;
+        }
+        return path;
     }
 
     /**
-     * Generates swagger file from schemas
-     * @params schema
-     * @returns Promise<void>
+     * Write schemas or API definitions into the on-disk OpenAPI document.
      */
     static async swaggiffy(schema: TSwaggerSchemaDef | SwaggerAPIDefinition, type: "DEFINITION" | "SCHEMA") {
-        return new Promise<void>((ok, fail) => {
-            const swaggerDoc: Buffer = PlatformTools.getFileContents(Utility.configStore.swaggerDefinitionFilePath);
-            let definition = "";
-            if (type === "DEFINITION") definition = this.updateAPIDefinition(swaggerDoc, schema as SwaggerAPIDefinition);
-            else if (type === "SCHEMA") definition = this.updateSchema(swaggerDoc, schema as TSwaggerSchemaDef);
+        return new Promise<void>((ok) => {
+            const filePath = Utility.resolveFilePath();
+            // Load without warning on the generation path — warning is emitted when serving
+            const doc = SpecFile.load(filePath, { warnLegacy: false });
 
-            PlatformTools.writeToFile(Utility.configStore.swaggerDefinitionFilePath, definition);
+            if (type === "SCHEMA") {
+                Utility.applySchemas(doc, schema as TSwaggerSchemaDef);
+            } else {
+                Utility.applyPaths(doc, schema as SwaggerAPIDefinition);
+            }
+
+            SpecFile.write(filePath, doc, Utility.configStore.format || "json");
             ok();
         });
     }
 
     /**
      * Converts SchemaMetadata[] to plain JSON Object
-     * @param array SchemaMetadata array
-     * @returns JSON defined SwaggerSchema
      */
     static toSwaggerSchema(array: SchemaMetadata[]): TSwaggerSchemaDef {
         let definition: TSwaggerSchemaDef = <TSwaggerSchemaDef>{};
@@ -112,35 +133,155 @@ export class Utility {
     }
 
     /**
-     * Converts APIDefinitionMetadata[] to plain JSON Object
-     * @param array APIDefinitionMetadata array
-     * @returns JSON defined SwaggerSchema
+     * Rewrite legacy `#/definitions/Name` refs to OpenAPI 3 components when needed.
+     */
+    private static rewriteRef(ref: string | undefined, isV3: boolean): string | undefined {
+        if (!ref) return ref;
+        if (isV3 && ref.startsWith("#/definitions/")) {
+            return ref.replace("#/definitions/", "#/components/schemas/");
+        }
+        if (!isV3 && ref.startsWith("#/components/schemas/")) {
+            return ref.replace("#/components/schemas/", "#/definitions/");
+        }
+        return ref;
+    }
+
+    private static rewriteResponseSchemas(responses: Record<string, any>, isV3: boolean): Record<string, any> {
+        const out: Record<string, any> = {};
+        for (const [code, resp] of Object.entries(responses || {})) {
+            const next = { ...resp };
+            if (next.schema) {
+                if (next.schema.$ref) {
+                    next.schema = { ...next.schema, $ref: Utility.rewriteRef(next.schema.$ref, isV3) };
+                }
+                if (next.schema.items?.$ref) {
+                    next.schema = {
+                        ...next.schema,
+                        items: { ...next.schema.items, $ref: Utility.rewriteRef(next.schema.items.$ref, isV3) },
+                    };
+                }
+                if (isV3) {
+                    // OpenAPI 3 uses content instead of schema on responses
+                    const media = "application/json";
+                    next.content = {
+                        [media]: {
+                            schema: next.schema,
+                        },
+                    };
+                    delete next.schema;
+                }
+            }
+            out[code] = next;
+        }
+        return out;
+    }
+
+    /**
+     * Build an operation object for OpenAPI 3 or Swagger 2 from stored metadata.
+     */
+    private static buildOperation(meta: APIDefinitionMetadata["apiDefinition"]["meta"], tags: string[], isV3: boolean): Record<string, unknown> {
+        const parameters: APIParameters[] = [...(meta.parameters || [])];
+        const bodyParams = parameters.filter((p) => p.in === "body");
+        const nonBodyParams = parameters.filter((p) => p.in !== "body");
+
+        const mappedParams = nonBodyParams.map((p) => {
+            if (isV3) {
+                // OpenAPI 3: type lives under schema
+                const { type, format, ...rest } = p;
+                const param: Record<string, unknown> = { ...rest };
+                if (type) {
+                    param.schema = { type, ...(format ? { format } : {}) };
+                } else if (p.schema) {
+                    param.schema = { ...p.schema };
+                    if (p.schema.$ref) {
+                        (param.schema as { $ref?: string }).$ref = Utility.rewriteRef(p.schema.$ref, true);
+                    }
+                }
+                // cookie is valid in v3; formData maps to nothing special at param level here
+                return param;
+            }
+            // Swagger 2: cookie not supported — map to header for compatibility
+            const param = { ...p };
+            if (param.in === "cookie") {
+                param.in = "header";
+            }
+            if (param.schema?.$ref) {
+                param.schema = { ...param.schema, $ref: Utility.rewriteRef(param.schema.$ref, false) };
+            }
+            return param;
+        });
+
+        const operation: Record<string, unknown> = {
+            tags,
+            summary: meta.summary,
+            description: meta.description,
+            parameters: mappedParams,
+            responses: Utility.rewriteResponseSchemas(meta.responses as any, isV3),
+        };
+
+        if (meta.operationId) operation.operationId = meta.operationId;
+
+        if (meta.security) {
+            operation.security = meta.security;
+        }
+
+        if (bodyParams.length > 0) {
+            const body = bodyParams[0];
+            const ref = Utility.rewriteRef(body.schema?.$ref, isV3) || body.schema?.$ref;
+            const consumes = meta.consumes || ["application/json"];
+            const primaryConsume = consumes[0] || "application/json";
+
+            if (isV3) {
+                operation.requestBody = {
+                    required: body.required !== false,
+                    content: {
+                        [primaryConsume]: {
+                            schema: ref ? { $ref: ref } : { type: body.type || "object" },
+                        },
+                    },
+                };
+            } else {
+                operation.parameters = [
+                    ...mappedParams,
+                    {
+                        in: "body",
+                        name: body.name || "body",
+                        required: body.required !== false,
+                        schema: ref ? { $ref: ref } : { type: body.type || "object" },
+                    },
+                ];
+                operation.consumes = consumes;
+                operation.produces = meta.produces || ["application/json"];
+            }
+        } else if (!isV3) {
+            operation.consumes = meta.consumes || ["application/json"];
+            operation.produces = meta.produces || ["application/json"];
+        }
+
+        return operation;
+    }
+
+    /**
+     * Converts APIDefinitionMetadata[] to a paths object for the active OpenAPI version.
      */
     static toSwaggerAPIDefinition(array: APIDefinitionMetadata[]): SwaggerAPIDefinition {
         let apiDefinition: SwaggerAPIDefinition = <SwaggerAPIDefinition>{};
+        const isV3 = Utility.isOpenApiV3Config();
 
         const pathStrings: string[] = array.map((item) => item.apiDefinition.pathString);
         const uniquePathStrings: string[] = Array.from(new Set(pathStrings));
 
         for (const pathString of uniquePathStrings) {
             const methods = array.filter((item) => item.apiDefinition.pathString === pathString);
-            let apiDefinerObj: SwaggerAPIDefinition = <SwaggerAPIDefinition>{};
+            let apiDefinerObj: Record<string, unknown> = {};
             for (const method of methods) {
                 apiDefinerObj = {
                     ...apiDefinerObj,
-                    ...{
-                        [method.apiDefinition.method]: {
-                            tags: method.apiDefinition.tags,
-                            operationId: method.apiDefinition.meta.operationId,
-                            summary: method.apiDefinition.meta.summary,
-                            description: method.apiDefinition.meta.description,
-                            parameters: method.apiDefinition.meta.parameters,
-                            consumes: method.apiDefinition.meta.consumes,
-                            produces: method.apiDefinition.meta.produces,
-                            responses: method.apiDefinition.meta.responses,
-                            security: method.apiDefinition.meta.security,
-                        },
-                    },
+                    [method.apiDefinition.method]: Utility.buildOperation(
+                        method.apiDefinition.meta,
+                        method.apiDefinition.tags,
+                        isV3,
+                    ),
                 };
             }
 
@@ -151,11 +292,12 @@ export class Utility {
                         ...apiDefinerObj,
                     },
                 },
-            };
+            } as SwaggerAPIDefinition;
         }
 
         return apiDefinition;
     }
+
 
     static extractType(func: (...args: unknown[]) => unknown) {
         const str = func.toString();

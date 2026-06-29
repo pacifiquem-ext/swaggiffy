@@ -1,8 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from "typeorm";
-import { Schema } from "swaggiffy";
+import { registerSchema } from "swaggiffy";
 import { User } from "./User";
 
-@Schema("Task")
 @Entity("tasks")
 export class Task {
     @PrimaryGeneratedColumn()
@@ -26,3 +25,5 @@ export class Task {
     @ManyToOne(() => User)
     user?: User;
 }
+
+registerSchema("Task", Task, { orm: "typeorm" });
