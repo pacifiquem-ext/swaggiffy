@@ -13,6 +13,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.14",
+    "sqlite3": "^5.1.6",
     "typeorm": "^0.3.17"
   },
   "devDependencies": {

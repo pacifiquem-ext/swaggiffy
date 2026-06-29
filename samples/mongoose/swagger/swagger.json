@@ -547,7 +547,7 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "6/17/2026, 1:52:26 PM"
+            "example": "6/29/2026, 5:51:45 PM"
           },
           "_id": {
             "type": "object"
@@ -577,11 +577,11 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "6/17/2026, 1:52:26 PM"
+            "example": "6/29/2026, 5:51:45 PM"
           },
           "updatedAt": {
             "type": "string",
-            "example": "6/17/2026, 1:52:26 PM"
+            "example": "6/29/2026, 5:51:45 PM"
           },
           "_id": {
             "type": "object"

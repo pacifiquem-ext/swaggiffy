@@ -552,11 +552,11 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "6/17/2026, 1:54:09 PM"
+            "example": "6/29/2026, 5:51:46 PM"
           },
           "updatedAt": {
             "type": "string",
-            "example": "6/17/2026, 1:54:10 PM"
+            "example": "6/29/2026, 5:51:46 PM"
           }
         }
       },
@@ -593,11 +593,11 @@
           },
           "createdAt": {
             "type": "string",
-            "example": "6/17/2026, 1:54:10 PM"
+            "example": "6/29/2026, 5:51:46 PM"
           },
           "updatedAt": {
             "type": "string",
-            "example": "6/17/2026, 1:54:10 PM"
+            "example": "6/29/2026, 5:51:46 PM"
           }
         }
       }
