@@ -27,9 +27,19 @@ export type TClassProp = {
     prop: string;
     type: TSwaggerDataType;
     required?: boolean;
+    nullable?: boolean;
     description?: string;
     format?: TSwaggerNumberFormats | TSwaggerStringFormats;
     example?: string | number | boolean | object;
+    default?: unknown;
+    maxLength?: number;
+    minLength?: number;
+    minimum?: number;
+    maximum?: number;
+    enum?: Array<string | number | boolean>;
+    items?: { type: TSwaggerDataType; format?: TSwaggerNumberFormats | TSwaggerStringFormats };
+    /** Foreign key / relation target, e.g. "users.id" or "User" */
+    references?: string;
 };
 
 /**
@@ -51,6 +61,7 @@ export type TClassDef = {
 export type TSwaggerType = {
     type: "object";
     properties: TSchemaProp;
+    required?: string[];
 };
 
 /**
@@ -82,6 +93,8 @@ export type TSwaggerSchemaObject = {
     maximum?: number;
     exclusiveMaximum?: number;
     example?: any;
+    default?: unknown;
+    nullable?: boolean;
     minimum?: number;
     exclusiveMinimum?: number;
     maxLength?: number;
@@ -93,7 +106,9 @@ export type TSwaggerSchemaObject = {
     maxProperties?: number;
     minProperties?: number;
     required?: boolean;
-    enum?: boolean;
+    enum?: Array<string | number | boolean>;
+    items?: { type: TSwaggerDataType; format?: TSwaggerNumberFormats | TSwaggerStringFormats };
+    "x-references"?: string;
 };
 
 /**

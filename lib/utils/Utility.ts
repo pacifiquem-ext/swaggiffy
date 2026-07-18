@@ -24,26 +24,38 @@ export class Utility {
      * Generate Swagger Schema Definition
      */
     static genSchemaDef(obj: TClassDef): TSwaggerSchema {
-        let props: TSchemaProp = {};
+        const properties: TSchemaProp = {};
+        const required: string[] = [];
 
         for (const prop of obj.props) {
-            props = Object.assign(
-                {
-                    [prop.prop]: {
-                        type: prop.type,
-                        example: prop.example,
-                        description: prop.description,
-                        required: prop.required,
-                    },
-                },
-                props,
-            );
+            const schemaObj: TSchemaProp[string] = { type: prop.type };
+            if (prop.format !== undefined) schemaObj.format = prop.format;
+            if (prop.example !== undefined) schemaObj.example = prop.example;
+            if (prop.description !== undefined) schemaObj.description = prop.description;
+            if (prop.default !== undefined) schemaObj.default = prop.default;
+            if (prop.maxLength !== undefined) schemaObj.maxLength = prop.maxLength;
+            if (prop.minLength !== undefined) schemaObj.minLength = prop.minLength;
+            if (prop.minimum !== undefined) schemaObj.minimum = prop.minimum;
+            if (prop.maximum !== undefined) schemaObj.maximum = prop.maximum;
+            if (prop.enum !== undefined) schemaObj.enum = prop.enum;
+            if (prop.nullable) schemaObj.nullable = true;
+            if (prop.items) schemaObj.items = prop.items;
+            if (prop.references) {
+                schemaObj["x-references"] = prop.references;
+                if (schemaObj.description === undefined) {
+                    schemaObj.description = `Foreign key referencing ${prop.references}`;
+                }
+            }
+
+            properties[prop.prop] = schemaObj;
+            if (prop.required) required.push(prop.prop);
         }
 
-        return <TSwaggerSchema>{
+        return {
             [obj.name]: {
                 type: "object",
-                properties: props,
+                properties,
+                ...(required.length > 0 ? { required } : {}),
             },
         };
     }
@@ -340,18 +352,17 @@ export class Utility {
     static castSequelizeType(
         type: string,
     ): [TSwaggerDataType, TSwaggerStringFormats | TSwaggerNumberFormats | undefined, boolean | undefined, string | number | boolean | undefined] {
-        console.log(type);
         switch (type) {
             case "STRING":
                 return ["string", undefined, undefined, "string"];
             case "TEXT":
                 return ["string", undefined, undefined, "string"];
             case "CITEXT":
-                return ["number", undefined, undefined, 0];
+                return ["string", undefined, undefined, "string"];
             case "DATE":
-                return ["string", "date", undefined, new Date().toLocaleString()];
+                return ["string", "date-time", undefined, new Date().toISOString()];
             case "DATEONLY":
-                return ["string", "date", undefined, new Date().toLocaleString()];
+                return ["string", "date", undefined, new Date().toISOString().slice(0, 10)];
             case "UUID":
                 return ["string", "uuid", undefined, "78a208e0-01fc-4cc0-b533-de8c076a6bf8"];
             case "UUIDV4":
@@ -363,11 +374,11 @@ export class Utility {
             case "DOUBLE":
                 return ["number", "double", undefined, 0.0];
             case "BIGINT":
-                return ["number", undefined, undefined, 0.0];
+                return ["integer", "int64", undefined, 0];
             case "DECIMAL":
-                return ["number", "float", true, 0.0];
+                return ["number", "double", undefined, 0.0];
             case "INTEGER":
-                return ["number", undefined, true, 0.0];
+                return ["integer", "int32", undefined, 0];
             default:
                 return ["object", undefined, undefined, undefined];
         }

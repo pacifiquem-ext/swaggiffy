@@ -65,12 +65,7 @@ function clearStorage() {
     (getAPIDefinitionMetadataStorage().apiDefinitions as unknown[]).splice(0);
 }
 
-// Suppress the debug console.log left in extractSequelize for these benchmarks.
-function withSilentConsole(fn: () => void) {
-    const orig = console.log;
-    console.log = () => { /* noop */ };
-    try { fn(); } finally { console.log = orig; }
-}
+
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -181,11 +176,10 @@ run("castMongooseType — 'ObjectID'",() => Utility.castMongooseType("ObjectID")
 run("castMongooseType — 'Date'",    () => Utility.castMongooseType("Date"),    1_000_000);
 run("castMongooseType — fallback",  () => Utility.castMongooseType("Decimal128"),1_000_000);
 
-// castSequelizeType has a stray console.log — suppress it here.
-run("castSequelizeType — 'STRING'",  () => { withSilentConsole(() => Utility.castSequelizeType("STRING")); },  200_000);
-run("castSequelizeType — 'INTEGER'", () => { withSilentConsole(() => Utility.castSequelizeType("INTEGER")); }, 200_000);
-run("castSequelizeType — 'DATE'",    () => { withSilentConsole(() => Utility.castSequelizeType("DATE")); },    200_000);
-run("castSequelizeType — fallback",  () => { withSilentConsole(() => Utility.castSequelizeType("JSONB")); },   200_000);
+run("castSequelizeType — 'STRING'",  () => Utility.castSequelizeType("STRING"),  1_000_000);
+run("castSequelizeType — 'INTEGER'", () => Utility.castSequelizeType("INTEGER"), 1_000_000);
+run("castSequelizeType — 'DATE'",    () => Utility.castSequelizeType("DATE"),    1_000_000);
+run("castSequelizeType — fallback",  () => Utility.castSequelizeType("JSONB"),   1_000_000);
 
 // ── Suite 2 — Schema definition generation (Object.assign loop) ───────────────
 

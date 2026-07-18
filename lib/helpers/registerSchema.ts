@@ -20,9 +20,7 @@ export type SchemaParam = {
 const SUPPORTED_ORMS = new Set(["mongoose", "sequelize", "prisma", "typeorm", "knex", "objection", "drizzle"]);
 
 /**
- * Resolve a schema into a TClassDef using ORM-aware extractors when available.
- * Full extractors for typeorm/prisma/knex/objection/drizzle land in Workstream 2;
- * until then those ORMs fall back to plain/class extraction with a warning.
+ * Resolve a schema into a TClassDef using the ORM-aware extractor pipeline.
  */
 function extractSchema(name: string, schema: SchemaRegistryType, options?: SchemaRegistryOptions): TClassDef {
     if (options?.orm) {
@@ -30,21 +28,22 @@ function extractSchema(name: string, schema: SchemaRegistryType, options?: Schem
             throw new SwaggiffyError(`Orm "${options.orm}" is not supported. Supported: ${Array.from(SUPPORTED_ORMS).join(", ")}`);
         }
 
-        if (options.orm === "mongoose") {
-            return SchemaExtractor.extractMongoose(schema as mongoose.Schema, name);
+        switch (options.orm) {
+            case "mongoose":
+                return SchemaExtractor.extractMongoose(schema as mongoose.Schema, name);
+            case "sequelize":
+                return SchemaExtractor.extractSequelize(schema, name);
+            case "typeorm":
+                return SchemaExtractor.extractTypeORM(schema, name);
+            case "prisma":
+                return SchemaExtractor.extractPrisma(schema, name);
+            case "knex":
+                return SchemaExtractor.extractKnex(schema, name);
+            case "objection":
+                return SchemaExtractor.extractObjection(schema, name);
+            case "drizzle":
+                return SchemaExtractor.extractDrizzle(schema, name);
         }
-        if (options.orm === "sequelize") {
-            return SchemaExtractor.extractSequelize(schema, name);
-        }
-
-        // Interim fallback for ORMs pending Workstream 2 extractors
-        PlatformTools.logWarn(
-            `[swaggiffy] ORM "${options.orm}" is accepted but full schema extraction is not implemented yet; using plain object inspection.`,
-        );
-        if (typeof schema === "function") {
-            return SchemaExtractor.extractClassProps(schema as new () => unknown, name);
-        }
-        return SchemaExtractor.extractPlain(schema as SchemaRegistryObj, name);
     }
 
     if (schema instanceof mongoose.Schema) {
@@ -53,7 +52,7 @@ function extractSchema(name: string, schema: SchemaRegistryType, options?: Schem
 
     PlatformTools.logWarn(
         `[swaggiffy] registerSchema("${name}") was called without an { orm } option. ` +
-            "Plain object inspection is lossy; pass { orm: 'mongoose' | 'sequelize' | ... } for richer schemas.",
+            "Plain object inspection is lossy; pass { orm: 'mongoose' | 'sequelize' | 'typeorm' | 'prisma' | 'knex' | 'objection' | 'drizzle' } for richer schemas.",
     );
 
     if (typeof schema === "function") {
