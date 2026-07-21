@@ -45,6 +45,6 @@ registerSchema("User", users, { orm: "drizzle" });
 registerSchema("Event", events, { orm: "drizzle" });
 ```
 
-`title` becomes `string` + `maxLength: 255` + required; `capacity` keeps `default: 100`; `userId` is documented as a foreign key to `users.id`.
+`title` becomes `string` + `maxLength: 255` + required; `capacity` keeps `default: 100`; `userId` is documented as a foreign key to `users.id`. `GET /api/events` documents `published` and `q` query parameters.
 
 `app.ts` imports `./schema` before calling `swaggiffy()`, which ensures the schema store is populated before Swaggiffy reads it and writes `swagger.json`.

@@ -7,7 +7,10 @@ const router = Router();
 
 router.get("/", authenticate, async (req, res) => {
     try {
-        const items = await db("items").select("*");
+        const q = typeof req.query.q === "string" ? req.query.q : undefined;
+        let query = db("items").select("*");
+        if (q) query = query.where("name", "like", `%${q}%`);
+        const items = await query;
         return res.json(items);
     } catch (err: any) {
         return res.status(500).json({ error: err.message });
@@ -60,6 +63,10 @@ registerDefinition(router, {
     mappedSchema: "Item",
     tags: "Items",
     summary: "Inventory item management",
+    description: "List accepts an optional q query parameter to search by name.",
+    parameters: [
+        { in: "query", name: "q", required: false, type: "string", description: "Search items by name" },
+    ],
 });
 
 export { router as itemRouter };

@@ -179,6 +179,49 @@ describe("Workstream 1 — OpenAPI output", () => {
         expect(bodyParam).to.be.undefined;
     });
 
+    it("query parameters declared in options appear as in: query", () => {
+        setupConfig(tmpDir, { openApiVersion: "3.0", format: "json" });
+        registerDefinition(makeRouter([{ method: "get", path: "/" }]), {
+            basePath: "/events",
+            mappedSchema: "Event",
+            tags: "Events",
+            parameters: [{ in: "query", name: "published", required: false, type: "boolean" }],
+        });
+        const paths = Utility.toSwaggerAPIDefinition(getAPIDefinitionMetadataStorage().apiDefinitions);
+        const op = (paths as any)["/events/"]?.get || (paths as any)["/events"]?.get;
+        const q = (op.parameters as any[]).find((p) => p.in === "query" && p.name === "published");
+        expect(q).to.exist;
+        expect(q.schema.type).to.equal("boolean");
+    });
+
+    it("formData parameters become requestBody in v3 and stay formData in v2", () => {
+        setupConfig(tmpDir, { openApiVersion: "3.0", format: "json" });
+        registerDefinition(makeRouter([{ method: "post", path: "/upload" }]), {
+            basePath: "/files",
+            mappedSchema: "File",
+            tags: "Files",
+            consumes: ["multipart/form-data"],
+            parameters: [{ in: "formData", name: "file", required: true, type: "string" }],
+        });
+        let paths = Utility.toSwaggerAPIDefinition(getAPIDefinitionMetadataStorage().apiDefinitions);
+        let op = (paths as any)["/files/upload"]?.post;
+        expect(op.requestBody.content["multipart/form-data"].schema.properties.file).to.exist;
+        expect((op.parameters || []).some((p: any) => p.in === "formData")).to.equal(false);
+
+        clearStorages();
+        setupConfig(tmpDir, { openApiVersion: "2.0", format: "json" });
+        registerDefinition(makeRouter([{ method: "post", path: "/upload" }]), {
+            basePath: "/files",
+            mappedSchema: "File",
+            tags: "Files",
+            parameters: [{ in: "formData", name: "file", required: true, type: "string" }],
+        });
+        paths = Utility.toSwaggerAPIDefinition(getAPIDefinitionMetadataStorage().apiDefinitions);
+        op = (paths as any)["/files/upload"]?.post;
+        expect(op.parameters.some((p: any) => p.in === "formData" && p.name === "file")).to.equal(true);
+        expect(op).to.not.have.property("requestBody");
+    });
+
     it("POST route in v2 config produces an in: body parameter", () => {
         setupConfig(tmpDir, { openApiVersion: "2.0", format: "json" });
         registerDefinition(makeRouter([{ method: "post", path: "/" }]), {

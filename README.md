@@ -30,26 +30,33 @@ pnpm add swaggiffy #pnpm
 
 ### Swaggify Configuration
 
-Swaggify creates a clean and simple configuration file. In addition, it create a swagger definition file,
-to your preffered path specified in the configuration file.
+`npx swaggiffy init -p PORT` writes `swaggiffy.config.json` and a starter spec file. The spec on disk is a **valid OpenAPI document** (not a swagger-jsdoc wrapper).
 
-This is will generate both `swaggiffy.config.json` and `swagger/swagger.json` files.
-
-```bash
-npx swaggiffy init -p PORT
+```json
+{
+   "projectName": "My API",
+   "openApiVersion": "3.0",
+   "outFile": "./swagger/swagger.json",
+   "apiRoute": "/api-docs",
+   "format": "json"
+}
 ```
 
-Generate the config file only.
+| Option | Values | Default | Effect |
+|---|---|---|---|
+| `openApiVersion` | `"3.0"` or `"2.0"` | `"3.0"` | OpenAPI 3 (`openapi: "3.0.0"`) or Swagger 2 (`swagger: "2.0"`) |
+| `format` | `"json"` or `"yaml"` | `"json"` | File encoding. Pair with `outFile` (`swagger.json` / `swagger.yaml`) |
+| `outFile` | path | `./swagger/swagger.json` | Where the spec is written |
+| `apiRoute` | path | `/api-docs` | Where swagger-ui is mounted |
+
+Generate just the config or just the spec:
 
 ```bash
 npx swaggiffy generate:config
-```
-
-Generate the spec file only.
-
-```bash
 npx swaggiffy generate:spec
 ```
+
+**Upgrading from an older Swaggiffy:** if your existing file still has a top-level `swaggerDefinition` key, the UI keeps working but a **yellow deprecation warning** is printed at startup. Delete the file (or regenerate) so a valid OpenAPI document is written.
 
 ### Instantiate Swaggify
 
@@ -124,24 +131,42 @@ class Model {
 
 #### API Definition Registry
 
-We generate API Definition from Express Routers.
-
-`tags`: Tags are swagger groupings
-`mappedSchema`: Maps the desired schema registered in swagger to your API Definition.
-`basePath`: Base Paths specifies the route for your router.
+API paths are generated from Express routers. Path parameters are inferred from `:id` style keys. Query, header, cookie, and form fields are declared on the options object — Express does not carry those definitions.
 
 ```js
 import { registerDefinition, registerDefinitions } from 'swaggiffy';
 
-registerDefinition(router, { tags: 'Products', mappedSchema: 'Product', basePath: '/products' });
+// Public route — no security field is written
+registerDefinition(authRouter, {
+    tags: 'Auth',
+    mappedSchema: 'User',
+    basePath: '/api/auth',
+    summary: 'Authentication (public)',
+});
+
+// Protected routes — security is only emitted when you pass it
+registerDefinition(userRouter, {
+    tags: 'Users',
+    mappedSchema: 'User',
+    basePath: '/api/users',
+    summary: 'User management',
+    description: 'Requires a Bearer JWT from /api/auth/login.',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+        { in: 'header', name: 'X-Request-ID', required: false, type: 'string' },
+        { in: 'query', name: 'q', required: false, type: 'string', description: 'Search' },
+    ],
+});
 
 registerDefinitions([
-    router1,
-    { tags: 'Products', mappedSchema: 'Product', basePath: '/products' },
-    router2,
-    { tags: 'Users', mappedSchema: 'User', basePath: '/user' },
+    { router: productRouter, options: { tags: 'Products', mappedSchema: 'Product', basePath: '/api/products' } },
+    { router: itemRouter, options: { tags: 'Items', mappedSchema: 'Item', basePath: '/api/items' } },
 ]);
 ```
+
+- `security` is optional. If omitted, the operation has **no** `security` field (no hardcoded `Bearer` / `["global"]` scopes).
+- POST / PUT / PATCH get a JSON body. In OpenAPI 3 that is `requestBody`; in Swagger 2 it stays `in: body`.
+- `parameters` with `in: "formData"` become `requestBody` + `multipart/form-data` in v3, and stay `formData` parameters in v2.
 
 #### Run the App
 
@@ -159,7 +184,7 @@ or create a `nodemon.json` file with
 
 ```json
 {
-    "ignore": ["*swagger.json"]
+    "ignore": ["*swagger.json", "*swagger.yaml"]
 }
 ```
 

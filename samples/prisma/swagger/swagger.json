@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Knex Inventory API",
-    "description": "Knex Inventory API API Documentation",
+    "title": "Prisma CMS API",
+    "description": "Prisma CMS API API Documentation",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "name": "API Support",
@@ -263,29 +263,21 @@
         ]
       }
     },
-    "/api/items": {
+    "/api/articles": {
       "get": {
         "tags": [
-          "Items"
+          "Articles"
         ],
-        "summary": "Inventory item management",
-        "description": "List accepts an optional q query parameter to search by name.",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "type": "string",
-            "description": "Search items by name"
-          }
-        ],
+        "summary": "Article management",
+        "description": "",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Item"
+                "$ref": "#/definitions/Article"
               }
             }
           },
@@ -311,24 +303,17 @@
       },
       "post": {
         "tags": [
-          "Items"
+          "Articles"
         ],
-        "summary": "Inventory item management",
-        "description": "List accepts an optional q query parameter to search by name.",
+        "summary": "Article management",
+        "description": "",
         "parameters": [
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "type": "string",
-            "description": "Search items by name"
-          },
           {
             "in": "body",
             "name": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Item"
+              "$ref": "#/definitions/Article"
             }
           }
         ],
@@ -336,7 +321,7 @@
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/Item"
+              "$ref": "#/definitions/Article"
             }
           },
           "500": {
@@ -351,26 +336,19 @@
         ]
       }
     },
-    "/api/items/{id}": {
+    "/api/articles/{id}": {
       "get": {
         "tags": [
-          "Items"
+          "Articles"
         ],
-        "summary": "Inventory item management",
-        "description": "List accepts an optional q query parameter to search by name.",
+        "summary": "Article management",
+        "description": "",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
             "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "type": "string",
-            "description": "Search items by name"
           }
         ],
         "responses": {
@@ -379,7 +357,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Item"
+                "$ref": "#/definitions/Article"
               }
             }
           },
@@ -405,10 +383,10 @@
       },
       "put": {
         "tags": [
-          "Items"
+          "Articles"
         ],
-        "summary": "Inventory item management",
-        "description": "List accepts an optional q query parameter to search by name.",
+        "summary": "Article management",
+        "description": "",
         "parameters": [
           {
             "in": "path",
@@ -417,18 +395,11 @@
             "type": "string"
           },
           {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "type": "string",
-            "description": "Search items by name"
-          },
-          {
             "in": "body",
             "name": "body",
             "required": false,
             "schema": {
-              "$ref": "#/definitions/Item"
+              "$ref": "#/definitions/Article"
             }
           }
         ],
@@ -436,7 +407,7 @@
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/Item"
+              "$ref": "#/definitions/Article"
             }
           },
           "500": {
@@ -452,23 +423,16 @@
       },
       "delete": {
         "tags": [
-          "Items"
+          "Articles"
         ],
-        "summary": "Inventory item management",
-        "description": "List accepts an optional q query parameter to search by name.",
+        "summary": "Article management",
+        "description": "",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
             "type": "string"
-          },
-          {
-            "in": "query",
-            "name": "q",
-            "required": false,
-            "type": "string",
-            "description": "Search items by name"
           }
         ],
         "responses": {
@@ -503,15 +467,14 @@
       "properties": {
         "id": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "default": "autoincrement()"
         },
         "name": {
-          "type": "string",
-          "maxLength": 255
+          "type": "string"
         },
         "email": {
-          "type": "string",
-          "maxLength": 255
+          "type": "string"
         },
         "password": {
           "type": "string"
@@ -519,60 +482,72 @@
         "createdAt": {
           "type": "string",
           "format": "date-time",
-          "default": "now()",
-          "nullable": true
+          "default": "now()"
+        },
+        "articles": {
+          "type": "array",
+          "description": "Relation to Article",
+          "nullable": true,
+          "items": {
+            "type": "object"
+          },
+          "x-references": "Article"
         }
       },
       "required": [
         "id",
         "name",
         "email",
-        "password"
+        "password",
+        "createdAt"
       ]
     },
-    "Item": {
+    "Article": {
       "type": "object",
       "properties": {
         "id": {
           "type": "integer",
+          "format": "int32",
+          "default": "autoincrement()"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "published": {
+          "type": "boolean",
+          "default": false
+        },
+        "authorId": {
+          "type": "integer",
           "format": "int32"
         },
-        "name": {
-          "type": "string",
-          "maxLength": 255
-        },
-        "description": {
-          "type": "string",
-          "nullable": true
-        },
-        "quantity": {
-          "type": "integer",
-          "format": "int32",
-          "default": 0,
-          "nullable": true
-        },
-        "price": {
-          "type": "number",
-          "format": "double"
-        },
-        "userId": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Foreign key referencing users.id",
-          "x-references": "users.id"
+        "author": {
+          "type": "object",
+          "description": "Relation to User (authorId → id)",
+          "x-references": "User"
         },
         "createdAt": {
           "type": "string",
           "format": "date-time",
-          "default": "now()",
-          "nullable": true
+          "default": "now()"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": [
         "id",
-        "name",
-        "price",
-        "userId"
+        "title",
+        "content",
+        "published",
+        "authorId",
+        "author",
+        "createdAt",
+        "updatedAt"
       ]
     }
   }

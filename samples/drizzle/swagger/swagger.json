@@ -268,8 +268,27 @@
           "Events"
         ],
         "summary": "Event management",
-        "description": "",
-        "parameters": [],
+        "description": "Public listing supports query filters; writes require auth.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "published",
+            "required": false,
+            "description": "Filter by published flag",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "description": "Search in event title",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -307,8 +326,27 @@
           "Events"
         ],
         "summary": "Event management",
-        "description": "",
-        "parameters": [],
+        "description": "Public listing supports query filters; writes require auth.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "published",
+            "required": false,
+            "description": "Filter by published flag",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "description": "Search in event title",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created",
@@ -342,12 +380,30 @@
           "Events"
         ],
         "summary": "Event management",
-        "description": "",
+        "description": "Public listing supports query filters; writes require auth.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "published",
+            "required": false,
+            "description": "Filter by published flag",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "description": "Search in event title",
             "schema": {
               "type": "string"
             }
@@ -390,12 +446,30 @@
           "Events"
         ],
         "summary": "Event management",
-        "description": "",
+        "description": "Public listing supports query filters; writes require auth.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "published",
+            "required": false,
+            "description": "Filter by published flag",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "description": "Search in event title",
             "schema": {
               "type": "string"
             }
@@ -432,12 +506,30 @@
           "Events"
         ],
         "summary": "Event management",
-        "description": "",
+        "description": "Public listing supports query filters; writes require auth.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "published",
+            "required": false,
+            "description": "Filter by published flag",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "description": "Search in event title",
             "schema": {
               "type": "string"
             }
@@ -473,53 +565,89 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "object"
+            "type": "integer",
+            "format": "int32"
           },
           "name": {
-            "type": "object"
+            "type": "string",
+            "maxLength": 255
           },
           "email": {
-            "type": "object"
+            "type": "string",
+            "maxLength": 255
           },
           "password": {
-            "type": "object"
+            "type": "string",
+            "maxLength": 255
           },
           "createdAt": {
-            "type": "object"
+            "type": "string",
+            "format": "date-time",
+            "default": "now()",
+            "nullable": true
           }
-        }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "password"
+        ]
       },
       "Event": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "object"
+            "type": "integer",
+            "format": "int32"
           },
           "title": {
-            "type": "object"
+            "type": "string",
+            "maxLength": 255
           },
           "description": {
-            "type": "object"
+            "type": "string",
+            "nullable": true
           },
           "location": {
-            "type": "object"
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
           },
           "date": {
-            "type": "object"
+            "type": "string",
+            "format": "date-time"
           },
           "capacity": {
-            "type": "object"
+            "type": "integer",
+            "format": "int32",
+            "default": 100,
+            "nullable": true
           },
           "published": {
-            "type": "object"
+            "type": "boolean",
+            "default": false,
+            "nullable": true
           },
           "userId": {
-            "type": "object"
+            "type": "integer",
+            "format": "int32",
+            "description": "Foreign key referencing users.id",
+            "nullable": true,
+            "x-references": "users.id"
           },
           "createdAt": {
-            "type": "object"
+            "type": "string",
+            "format": "date-time",
+            "default": "now()",
+            "nullable": true
           }
-        }
+        },
+        "required": [
+          "id",
+          "title",
+          "date"
+        ]
       }
     },
     "securitySchemes": {

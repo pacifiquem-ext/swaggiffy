@@ -130,3 +130,17 @@ export function registerDefinition(router: RouterLike, options: APIDefinitionOpt
         } as APIDefinitionMetadata);
     });
 }
+
+export type DefinitionParam = {
+    router: RouterLike;
+    options: APIDefinitionOptions;
+};
+
+/**
+ * Register several routers in one call.
+ */
+export function registerDefinitions(definitions: DefinitionParam[]) {
+    for (const item of definitions) {
+        registerDefinition(item.router, item.options);
+    }
+}

@@ -156,6 +156,8 @@ export enum ESchemas {
 export type EMimeTypes =
     | "text/plain; charset=utf-8"
     | "application/json"
+    | "multipart/form-data"
+    | "application/x-www-form-urlencoded"
     | "application/vnd.github+json"
     | "application/vnd.github.v3+json"
     | "application/vnd.github.v3.raw+json"

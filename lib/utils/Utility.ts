@@ -194,9 +194,10 @@ export class Utility {
     private static buildOperation(meta: APIDefinitionMetadata["apiDefinition"]["meta"], tags: string[], isV3: boolean): Record<string, unknown> {
         const parameters: APIParameters[] = [...(meta.parameters || [])];
         const bodyParams = parameters.filter((p) => p.in === "body");
-        const nonBodyParams = parameters.filter((p) => p.in !== "body");
+        const formParams = parameters.filter((p) => p.in === "formData");
+        const otherParams = parameters.filter((p) => p.in !== "body" && p.in !== "formData");
 
-        const mappedParams = nonBodyParams.map((p) => {
+        const mappedParams = otherParams.map((p) => {
             if (isV3) {
                 // OpenAPI 3: type lives under schema
                 const { type, format, ...rest } = p;
@@ -209,7 +210,6 @@ export class Utility {
                         (param.schema as { $ref?: string }).$ref = Utility.rewriteRef(p.schema.$ref, true);
                     }
                 }
-                // cookie is valid in v3; formData maps to nothing special at param level here
                 return param;
             }
             // Swagger 2: cookie not supported — map to header for compatibility
@@ -223,11 +223,23 @@ export class Utility {
             return param;
         });
 
+        // Swagger 2 keeps formData as parameters
+        const v2FormParams = !isV3
+            ? formParams.map((p) => ({
+                  in: "formData" as const,
+                  name: p.name,
+                  type: p.type || "string",
+                  required: p.required,
+                  description: p.description,
+                  format: p.format,
+              }))
+            : [];
+
         const operation: Record<string, unknown> = {
             tags,
             summary: meta.summary,
             description: meta.description,
-            parameters: mappedParams,
+            parameters: isV3 ? mappedParams : [...mappedParams, ...v2FormParams],
             responses: Utility.rewriteResponseSchemas(meta.responses as any, isV3),
         };
 
@@ -237,24 +249,56 @@ export class Utility {
             operation.security = meta.security;
         }
 
+        const consumes = meta.consumes || ["application/json"];
+        const primaryConsume = consumes[0] || "application/json";
+
+        if (isV3 && formParams.length > 0) {
+            const formMedia = consumes.find((c) => c.includes("multipart") || c.includes("urlencoded")) || "multipart/form-data";
+            const properties: Record<string, Record<string, unknown>> = {};
+            const required: string[] = [];
+            for (const fp of formParams) {
+                properties[fp.name] = { type: fp.type || "string", ...(fp.format ? { format: fp.format } : {}), ...(fp.description ? { description: fp.description } : {}) };
+                if (fp.required) required.push(fp.name);
+            }
+            operation.requestBody = {
+                required: required.length > 0,
+                content: {
+                    [formMedia]: {
+                        schema: {
+                            type: "object",
+                            properties,
+                            ...(required.length ? { required } : {}),
+                        },
+                    },
+                },
+            };
+        }
+
         if (bodyParams.length > 0) {
             const body = bodyParams[0];
             const ref = Utility.rewriteRef(body.schema?.$ref, isV3) || body.schema?.$ref;
-            const consumes = meta.consumes || ["application/json"];
-            const primaryConsume = consumes[0] || "application/json";
 
             if (isV3) {
+                const existing = (operation.requestBody as { content?: Record<string, unknown> } | undefined)?.content || {};
+                const formOwnsPrimary =
+                    formParams.length > 0 && (primaryConsume.includes("multipart") || primaryConsume.includes("urlencoded"));
+                const jsonKey = formOwnsPrimary ? "application/json" : primaryConsume;
+                // When the user declared form fields and a form consume type, do not
+                // clobber that media type with the automatic mappedSchema $ref.
                 operation.requestBody = {
                     required: body.required !== false,
-                    content: {
-                        [primaryConsume]: {
-                            schema: ref ? { $ref: ref } : { type: body.type || "object" },
-                        },
-                    },
+                    content: formOwnsPrimary
+                        ? existing
+                        : {
+                              ...existing,
+                              [jsonKey]: {
+                                  schema: ref ? { $ref: ref } : { type: body.type || "object" },
+                              },
+                          },
                 };
             } else {
                 operation.parameters = [
-                    ...mappedParams,
+                    ...((operation.parameters as unknown[]) || []),
                     {
                         in: "body",
                         name: body.name || "body",

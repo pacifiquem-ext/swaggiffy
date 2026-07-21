@@ -59,4 +59,6 @@ registerSchema("Item", {
 }, { orm: "knex" });
 ```
 
+This sample is configured for **Swagger 2.0** (`openApiVersion: "2.0"`). `GET /api/items` documents a `q` query parameter.
+
 The `db.ts` file exports `dbInsert` / `dbUpdateOne` helpers that abstract the difference between PostgreSQL's `RETURNING` clause and SQLite's two-step insert-then-select.

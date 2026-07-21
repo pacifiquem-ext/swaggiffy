@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { registerDefinition } from "../../lib/helpers/registerDefinition";
+import { registerDefinition, registerDefinitions } from "../../lib/helpers/registerDefinition";
 import { getAPIDefinitionMetadataStorage } from "../../lib/globals";
 
 function clearDefinitionStorage() {
@@ -173,5 +173,37 @@ describe("registerDefinition", () => {
         });
         const params = getAPIDefinitionMetadataStorage().apiDefinitions[0].apiDefinition.meta.parameters || [];
         expect(params.some((p) => p.in === "header" && p.name === "X-Auth-Token")).to.equal(true);
+    });
+
+    it("merges user-declared query and formData parameters", () => {
+        const router = makeRouter([{ method: "post", path: "/upload" }]);
+        registerDefinition(router, {
+            basePath: "/api/files",
+            mappedSchema: "File",
+            tags: "Files",
+            parameters: [
+                { in: "query", name: "folder", required: false, type: "string" },
+                { in: "formData", name: "file", required: true, type: "string" },
+            ],
+        });
+        const params = getAPIDefinitionMetadataStorage().apiDefinitions[0].apiDefinition.meta.parameters || [];
+        expect(params.some((p) => p.in === "query" && p.name === "folder")).to.equal(true);
+        expect(params.some((p) => p.in === "formData" && p.name === "file")).to.equal(true);
+    });
+
+    it("registerDefinitions registers several routers in one call", () => {
+        registerDefinitions([
+            {
+                router: makeRouter([{ method: "get", path: "/" }]),
+                options: { basePath: "/api/users", mappedSchema: "User", tags: "Users" },
+            },
+            {
+                router: makeRouter([{ method: "get", path: "/" }]),
+                options: { basePath: "/api/items", mappedSchema: "Item", tags: "Items" },
+            },
+        ]);
+        const storage = getAPIDefinitionMetadataStorage();
+        expect(storage.apiDefinitions).to.have.length(2);
+        expect(storage.apiDefinitions.map((d) => d.apiDefinition.pathString)).to.include.members(["/api/users/", "/api/items/"]);
     });
 });

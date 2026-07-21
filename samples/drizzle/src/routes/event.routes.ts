@@ -9,7 +9,15 @@ const router = Router();
 
 router.get("/", async (req, res) => {
     try {
-        const result = await db.select().from(events).where(eq(events.published, true));
+        const published = req.query.published;
+        const q = typeof req.query.q === "string" ? req.query.q : undefined;
+        let result = await db.select().from(events);
+        if (published === "true" || published === "false") {
+            result = result.filter((row) => row.published === (published === "true"));
+        }
+        if (q) {
+            result = result.filter((row) => (row.title || "").toLowerCase().includes(q.toLowerCase()));
+        }
         return res.json(result);
     } catch (err: any) {
         return res.status(500).json({ error: err.message });
@@ -69,6 +77,11 @@ registerDefinition(router, {
     mappedSchema: "Event",
     tags: "Events",
     summary: "Event management",
+    description: "Public listing supports query filters; writes require auth.",
+    parameters: [
+        { in: "query", name: "published", required: false, type: "boolean", description: "Filter by published flag" },
+        { in: "query", name: "q", required: false, type: "string", description: "Search in event title" },
+    ],
 });
 
 export { router as eventRouter };

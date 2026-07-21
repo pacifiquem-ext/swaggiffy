@@ -590,7 +590,8 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "name": {
             "type": "string"
@@ -602,32 +603,60 @@
             "type": "string"
           },
           "createdAt": {
-            "type": "object"
+            "type": "string",
+            "format": "date-time",
+            "default": "now()"
           }
-        }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "password",
+          "createdAt"
+        ]
       },
       "Task": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "title": {
             "type": "string"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "completed": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           },
           "userId": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "createdAt": {
-            "type": "object"
+            "type": "string",
+            "format": "date-time",
+            "default": "now()"
+          },
+          "user": {
+            "type": "object",
+            "description": "many-to-one to User",
+            "nullable": true,
+            "x-references": "User"
           }
-        }
+        },
+        "required": [
+          "id",
+          "title",
+          "completed",
+          "userId",
+          "createdAt"
+        ]
       }
     },
     "securitySchemes": {
