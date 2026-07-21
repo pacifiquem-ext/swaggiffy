@@ -106,11 +106,11 @@ Each sample under `/samples` must be updated so that it works correctly with the
 
 | Sample | Required update | Status |
 |---|---|---|
-| `samples/drizzle` | Switch `openApiVersion` to `"3.0"`. Valid OpenAPI v3 output. `registerSchema(..., { orm: "drizzle" })` (full extractor still pending in WS2 — interim plain fallback with warning). | ✅ |
-| `samples/knex` | Keep `openApiVersion: "2.0"`. Valid Swagger 2.0 (no swagger-jsdoc wrapper). `registerSchema(..., { orm: "knex" })` (full extractor pending WS2). | ✅ |
+| `samples/drizzle` | Switch `openApiVersion` to `"3.0"`. Valid OpenAPI v3 output. `registerSchema(..., { orm: "drizzle" })` with full table extraction. | ✅ |
+| `samples/knex` | Keep `openApiVersion: "2.0"`. Valid Swagger 2.0 (no swagger-jsdoc wrapper). `registerSchema(..., { orm: "knex" })` with column descriptors. | ✅ |
 | `samples/mongoose` | `format: "yaml"`, `outFile: ./swagger/swagger.yaml`. Valid OpenAPI YAML. | ✅ |
 | `samples/sequelize` | Public `/api/auth` has no security; protected `/api/users` & `/api/products` use explicit `security: [{ bearerAuth: [] }]` plus summary/description/responses. | ✅ |
-| `samples/typeorm` | Header params (`X-Request-ID`, `X-Auth-Token`); v3 `requestBody` on POST/PUT; `registerSchema(..., { orm: "typeorm" })` (full extractor pending WS2). | ✅ |
+| `samples/typeorm` | Header params (`X-Request-ID`, `X-Auth-Token`); v3 `requestBody` on POST/PUT; `registerSchema(..., { orm: "typeorm" })` with decorator metadata. | ✅ |
 
 ---
 
@@ -133,7 +133,7 @@ All new behaviors must have unit or integration test coverage. The following tes
 
 ## Workstream 2: Full ORM Schema Extraction Pipeline
 
-> **Status: ⏳ PENDING** (call signature partially landed in WS1: `orm` accepts all ORM names; only `mongoose` / `sequelize` have real extractors — others fall back to plain/class inspection with a warning until the extractors below ship)
+> **Status: ✅ COMPLETE** (implemented; covered by `test/core/extractors.test.ts` + routing tests; samples updated to `{ orm: "..." }`)
 
 
 ### Background
@@ -144,7 +144,7 @@ The goal is to build a proper schema extraction pipeline that understands each O
 
 ---
 
-### 2.1 — New `registerSchema` call signature ⏳ (partial: signature + routing accepted; full extractors pending)
+### 2.1 — New `registerSchema` call signature ✅
 
 **What to do:**
 - The signature `registerSchema('Model Name', ClassOrObject, { orm: 'xxx' })` must be the canonical way to register an ORM schema.
@@ -160,7 +160,7 @@ The goal is to build a proper schema extraction pipeline that understands each O
 
 ---
 
-### 2.2 — ORM extractor: Drizzle ⏳
+### 2.2 — ORM extractor: Drizzle ✅
 
 **What to do:**
 - Accept a Drizzle table definition object (the result of `pgTable`, `mysqlTable`, `sqliteTable`, etc.) as the schema input.
@@ -189,7 +189,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.3 — ORM extractor: TypeORM ⏳
+### 2.3 — ORM extractor: TypeORM ✅
 
 **What to do:**
 - Accept a TypeORM entity class (decorated with `@Entity`, `@Column`, etc.) as the schema input.
@@ -200,7 +200,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.4 — ORM extractor: Prisma ⏳
+### 2.4 — ORM extractor: Prisma ✅
 
 **What to do:**
 - Accept a Prisma-generated model type or DMMF model descriptor as the schema input, or alternatively accept the Prisma client's internal model metadata.
@@ -212,7 +212,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.5 — ORM extractor: Knex ⏳
+### 2.5 — ORM extractor: Knex ✅
 
 **What to do:**
 - Knex is a query builder with no schema-definition objects at the application layer; schema is defined in migration files, not in model classes.
@@ -230,7 +230,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.6 — ORM extractor: Objection.js ⏳
+### 2.6 — ORM extractor: Objection.js ✅
 
 **What to do:**
 - Accept an Objection.js model class (extends `Model`) as the schema input.
@@ -242,7 +242,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.7 — ORM extractor: Sequelize (upgrade) ⏳
+### 2.7 — ORM extractor: Sequelize (upgrade) ✅
 
 **What to do:**
 - The existing `extractSequelize` already handles basic type mapping but has known gaps: it does not extract `allowNull`, `defaultValue`, field-level `validate` constraints, or association metadata.
@@ -253,7 +253,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.8 — ORM extractor: Mongoose (upgrade) ⏳
+### 2.8 — ORM extractor: Mongoose (upgrade) ✅
 
 **What to do:**
 - The existing `extractMongoose` handles type mapping but does not extract `required`, `default`, `minlength`, `maxlength`, `min`, `max`, or `enum` from path options.
@@ -266,7 +266,7 @@ events.description → type: string, nullable: true (not in required array)
 
 ---
 
-### 2.9 — Update sample projects for new ORM extractors ⏳
+### 2.9 — Update sample projects for new ORM extractors ✅
 
 All existing samples must be updated to use the new `{ orm: 'xxx' }` syntax so they continue to work after the extractor refactor.
 
@@ -282,7 +282,7 @@ All existing samples must be updated to use the new `{ orm: 'xxx' }` syntax so t
 
 ---
 
-### 2.10 — Tests for Workstream 2 ⏳
+### 2.10 — Tests for Workstream 2 ✅
 
 Each ORM extractor must have dedicated unit tests. The following are required at minimum:
 

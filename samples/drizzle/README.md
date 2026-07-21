@@ -37,20 +37,14 @@ Run `npm run db:push` once to create the tables using Drizzle Kit.
 
 ## Swaggiffy Integration
 
-Drizzle uses table builder functions (`pgTable`) rather than class instances, so schemas are registered using plain JavaScript objects that mirror the table shape:
+Pass the Drizzle table objects themselves — Swaggiffy reads `notNull()`, `default()`, `varchar({ length })`, and `.references()`:
 
 ```ts
 // src/schema.ts — runs at import time
-registerSchema('Event', {
-    id: 0,
-    title: '',
-    description: '',
-    location: '',
-    date: new Date(),
-    capacity: 0,
-    published: false,
-    userId: 0,
-});
+registerSchema("User", users, { orm: "drizzle" });
+registerSchema("Event", events, { orm: "drizzle" });
 ```
+
+`title` becomes `string` + `maxLength: 255` + required; `capacity` keeps `default: 100`; `userId` is documented as a foreign key to `users.id`.
 
 `app.ts` imports `./schema` before calling `swaggiffy()`, which ensures the schema store is populated before Swaggiffy reads it and writes `swagger.json`.

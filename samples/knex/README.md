@@ -44,18 +44,19 @@ DB_PASSWORD=postgres
 
 ## Swaggiffy Integration
 
-Knex has no model classes, so schemas are registered with plain JavaScript objects that represent the row shape:
+Knex has no model classes, so schemas are registered with a column-descriptor object that carries types and constraints:
 
 ```ts
 // src/schemas/Item.ts
-registerSchema('Item', {
-    id: 0,
-    name: '',
-    description: '',
-    quantity: 0,
-    price: 0,
-    userId: 0,
-});
+registerSchema("Item", {
+    id: { type: "integer", primaryKey: true },
+    name: { type: "string", notNull: true, maxLength: 255 },
+    description: { type: "text" },
+    quantity: { type: "integer", default: 0 },
+    price: { type: "decimal", notNull: true },
+    userId: { type: "integer", notNull: true, references: { table: "users", column: "id" } },
+    createdAt: { type: "datetime", default: "now()" },
+}, { orm: "knex" });
 ```
 
-Swaggiffy's `extractPlain` reads `typeof value` for each key and maps it to a Swagger type. The `db.ts` file exports `dbInsert` / `dbUpdateOne` helpers that abstract the difference between PostgreSQL's `RETURNING` clause and SQLite's two-step insert-then-select.
+The `db.ts` file exports `dbInsert` / `dbUpdateOne` helpers that abstract the difference between PostgreSQL's `RETURNING` clause and SQLite's two-step insert-then-select.

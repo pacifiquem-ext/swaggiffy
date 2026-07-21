@@ -15,11 +15,11 @@ export class Product extends Model {
 Product.init(
     {
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        name: { type: DataTypes.STRING, allowNull: false },
+        name: { type: DataTypes.STRING(255), allowNull: false },
         description: { type: DataTypes.TEXT },
         price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
         stock: { type: DataTypes.INTEGER, defaultValue: 0 },
-        userId: { type: DataTypes.INTEGER, allowNull: false },
+        userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: "users", key: "id" } },
     },
     { sequelize, tableName: "products", timestamps: true },
 );

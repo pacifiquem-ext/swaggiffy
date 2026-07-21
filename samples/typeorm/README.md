@@ -42,16 +42,19 @@ DB_PASSWORD=postgres
 
 ## Swaggiffy Integration
 
-The `@Schema()` decorator and TypeORM's `@Entity()` decorator are stacked on the same class. This works because Swaggiffy instantiates the class (`new User()`) and reads own-property default values — independent of TypeORM's metadata.
+Register the TypeORM entity class. Swaggiffy reads decorator metadata (`@Column`, `@PrimaryGeneratedColumn`, `@CreateDateColumn`, relations):
 
 ```ts
-@Schema('Task')   // Swaggiffy reads: id=0, title='', completed=false, ...
-@Entity('tasks')  // TypeORM maps to SQL table
+@Entity("tasks")
 export class Task {
     @PrimaryGeneratedColumn() id: number = 0;
-    @Column()                 title: string = '';
+    @Column() title: string = "";
+    @Column({ nullable: true }) description: string = "";
     @Column({ default: false }) completed: boolean = false;
+    @ManyToOne(() => User) user?: User;
 }
+
+registerSchema("Task", Task, { orm: "typeorm" });
 ```
 
-Default values on class fields are what allow `@Schema()` to infer types at runtime.
+`nullable`, `default`, `length`, and relations show up on the generated OpenAPI schema. Import `reflect-metadata` before the entity files.

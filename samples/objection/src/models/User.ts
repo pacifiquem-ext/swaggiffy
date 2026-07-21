@@ -1,9 +1,21 @@
 import { Model } from "objection";
-import { Schema } from "swaggiffy";
+import { registerSchema } from "swaggiffy";
 
-@Schema("User")
 export class User extends Model {
     static tableName = "users";
+
+    static jsonSchema = {
+        type: "object",
+        required: ["name", "email", "password"],
+        properties: {
+            id: { type: "integer" },
+            name: { type: "string", minLength: 1, maxLength: 255 },
+            email: { type: "string", maxLength: 255 },
+            password: { type: "string" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+        },
+    };
 
     id = 0;
     name = "";
@@ -12,3 +24,5 @@ export class User extends Model {
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
 }
+
+registerSchema("User", User, { orm: "objection" });

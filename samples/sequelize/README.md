@@ -52,4 +52,4 @@ registerSchema('Product', Product.rawAttributes, { orm: 'sequelize' });
 registerDefinition(router, { basePath: '/api/products', mappedSchema: 'Product', tags: 'Products' });
 ```
 
-Swaggiffy's `extractSequelize` reads each attribute's `.type.key` (e.g. `'STRING'`, `'INTEGER'`, `'DECIMAL'`) and maps it to the corresponding Swagger data type.
+Swaggiffy's Sequelize extractor reads each attribute's type (`STRING(255)` → `maxLength: 255`), `allowNull` (non-nullable fields go in `required`), `defaultValue`, and FK `references`.

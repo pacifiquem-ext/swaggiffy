@@ -11,6 +11,7 @@ Swaggiffy is a zero config opensource tool for documenting your Node.js Express 
 -   Supports both OpenAPI 2 and OpenAPI 3.
 -   Supports for Typescript Classes.
 -   Support for Mongoose ORM Schema Objects.
+-   ORM-aware schema extraction for Mongoose, Sequelize, TypeORM, Prisma, Knex, Objection, and Drizzle.
 -   Support for Swagger YAML and JSON.
 -   Rich CLI.
 -   Built on top on Express and Swagger.
@@ -74,13 +75,39 @@ To register a schema
 ```js
 import { registerSchema, registerSchemas } from 'swaggiffy';
 
+// Canonical form: name, class/object, { orm }
+registerSchema('User', userSchema, { orm: 'mongoose' });
+registerSchema('Product', Product.rawAttributes, { orm: 'sequelize' });
+registerSchema('Task', Task, { orm: 'typeorm' });
+registerSchema('Article', Prisma /* or a DMMF model */, { orm: 'prisma' });
+registerSchema('Item', knexItemDescriptor, { orm: 'knex' });
+registerSchema('Book', Book, { orm: 'objection' });
+registerSchema('Event', events, { orm: 'drizzle' });
 
-registerSchema('Model Name 1', modelObj1); // for plain Js objects
-registerSchema('Model Name 2', modelObj2, { orm: 'mongoose' }); // for mongoose model
-registerSchema('Model Name 2', modelObj3, { orm: 'sequelize' }); // for sequelize model
+// Plain objects still work, but are lossy (type only — no nullability, defaults, or FKs)
+registerSchema('Model Name 1', { id: 0, name: '' });
 
-registerSchemas([  {'Model Name 1', modelObj1 }, {'Model Name 2', modelObj2, { orm: 'mongoose' }} ]); // for multiple schemas
+registerSchemas([
+    { name: 'User', schema: userSchema, options: { orm: 'mongoose' } },
+    { name: 'Event', schema: events, options: { orm: 'drizzle' } },
+]);
 ```
+
+#### Supported ORMs
+
+| `orm` | What you pass | Metadata captured |
+|---|---|---|
+| `mongoose` | `mongoose.Schema` or Model | types, `required`, `default`, `min`/`max`, `minlength`/`maxlength`, `enum`, `ref` |
+| `sequelize` | Model class or `rawAttributes` | types, `allowNull` → `required`, `defaultValue`, `STRING(n)` → `maxLength`, FK `references` |
+| `typeorm` | `@Entity` class | `@Column` / `@PrimaryGeneratedColumn` / `@CreateDateColumn` types, `nullable`, `default`, `length`, relations |
+| `prisma` | DMMF model, `Prisma` namespace, or `{ fields: [...] }` | scalar types, `isRequired`, `@default`, relations |
+| `knex` | Column descriptor object | `type`, `notNull`, `maxLength`, `default`, `references` |
+| `objection` | Model class | `static jsonSchema` (preferred) plus `relationMappings`; warns if `jsonSchema` is missing |
+| `drizzle` | `pgTable` / `mysqlTable` / `sqliteTable` | types, `notNull()`, `default()` / `defaultNow()`, `varchar({ length })`, `.references()` |
+
+Passing an unsupported `orm` string throws. Omitting `orm` on a plain object or class logs a warning and falls back to basic `typeof` inspection.
+
+The generated spec is a **valid OpenAPI document** (default `openapi: "3.0.x"`). Set `openApiVersion: "2.0"` in `swaggiffy.config.json` for Swagger 2, and `format: "yaml"` for YAML output. Per-route `security` is only written when you pass it on `registerDefinition` — public routes stay public. If an old swagger-jsdoc wrapper file is detected at startup, Swaggiffy serves it and prints a yellow deprecation warning; regenerate the spec to clear it.
 
 For classes use
 

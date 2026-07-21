@@ -12,7 +12,7 @@ export interface IPost extends Document {
 }
 
 const postSchema = new mongoose.Schema<IPost>({
-    title: { type: String, required: true },
+    title: { type: String, required: true, minlength: 1, maxlength: 200 },
     content: { type: String, required: true },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     tags: [{ type: String }],

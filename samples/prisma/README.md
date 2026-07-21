@@ -34,18 +34,11 @@ The default config uses **SQLite** (`file:./dev.db`) — no Postgres server need
 
 ## Swaggiffy Integration
 
-Prisma generates TypeScript types (not inspectable classes), so Swaggiffy schemas are registered using plain TypeScript classes with the `@Schema()` decorator:
+Prisma types are not inspectable at runtime, so schemas are registered from a DMMF-shaped model (or `Prisma.dmmf` after `prisma generate`):
 
 ```ts
 // src/schemas/Article.ts
-@Schema('Article')
-export class ArticleSchema {
-    id: number = 0;
-    title: string = '';
-    content: string = '';
-    published: boolean = false;
-    authorId: number = 0;
-}
+registerSchema("Article", ArticleDmmf, { orm: "prisma" });
 ```
 
-These are imported in `app.ts` before `swaggiffy()` is called, ensuring the schemas are registered in the global store before Swaggiffy reads them.
+The extractor maps Prisma scalars (`String`, `Int`, `DateTime`, `Boolean`, …), `isRequired`, `@default`, and relations. These files are imported in `app.ts` before `swaggiffy()` is called.

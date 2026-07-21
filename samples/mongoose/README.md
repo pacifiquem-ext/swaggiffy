@@ -47,4 +47,4 @@ registerDefinition(router, { basePath: '/api/posts', mappedSchema: 'Post', tags:
 new Swaggiffy().setupExpress(app).swaggiffy();
 ```
 
-Swaggiffy reads `swaggiffy.config.json` for the output path and API route, introspects the Mongoose Schema `paths` map to build type definitions, and walks the Express router stack to generate path entries.
+Swaggiffy reads `swaggiffy.config.json` for the output path and API route, introspects the Mongoose Schema `paths` map (types, `required`, `default`, `minlength`/`maxlength`, `enum`, `ref`), and walks the Express router stack to generate path entries.

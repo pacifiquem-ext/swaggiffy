@@ -42,19 +42,26 @@ DB_PASSWORD=postgres
 
 ## Swaggiffy Integration
 
-Objection models are plain classes that extend `Model`, which makes them compatible with Swaggiffy's `@Schema()` decorator. Swaggiffy instantiates the class and reads the default property values:
+Objection models expose `static jsonSchema`, which Swaggiffy uses as the source of truth:
 
 ```ts
-@Schema('Book')           // Swaggiffy reads: id=0, title='', author='', ...
 export class Book extends Model {
-    static tableName = 'books';
-    id: number = 0;
-    title: string = '';
-    author: string = '';
-    isbn: string = '';
-    year: number = 0;
-    available: boolean = true;
+    static tableName = "books";
+    static jsonSchema = {
+        type: "object",
+        required: ["title", "author"],
+        properties: {
+            id: { type: "integer" },
+            title: { type: "string", minLength: 1, maxLength: 255 },
+            author: { type: "string" },
+            available: { type: "boolean", default: true },
+        },
+    };
 }
+
+registerSchema("Book", Book, { orm: "objection" });
 ```
+
+`relationMappings` are recorded as `x-references`. If `jsonSchema` is omitted, Swaggiffy falls back to class inspection and logs a warning.
 
 Objection's `insertAndFetch()` and `patchAndFetchById()` do a fetch after the mutation, which works across both PostgreSQL and SQLite without needing `RETURNING`.
